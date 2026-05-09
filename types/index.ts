@@ -34,3 +34,13 @@ export interface UserProfile {
   email: string
   role: 'member' | 'admin'
 }
+
+export interface Profile {
+  id: string
+  username: string
+  full_name: string
+  phone: string | null
+  birth_date: string | null
+  congregation: string | null
+  created_at: string
+}
