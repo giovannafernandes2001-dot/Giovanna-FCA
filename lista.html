@@ -846,15 +846,20 @@ const sections = [
 ];
 
 // ── Load generated list or use default ─────────────
-const defaultSections = sections.slice(); // backup
 const _generated = localStorage.getItem('mercado-generated-list');
-if (_generated) {
+let _modoManual = false;
+if (_generated !== null) {
   try {
     const parsed = JSON.parse(_generated);
     sections.length = 0;
     parsed.forEach(s => sections.push(s));
     const sub = document.querySelector('.subtitle');
-    if (sub) sub.textContent = 'Sua lista personalizada ✨';
+    if (parsed.length === 0) {
+      _modoManual = true;
+      if (sub) sub.textContent = 'Lista manual';
+    } else {
+      if (sub) sub.textContent = 'Sua lista personalizada ✨';
+    }
   } catch (_) {}
 }
 

@@ -396,6 +396,12 @@
 
   .btn-example:hover { border-color: var(--accent); color: var(--accent); }
 
+  .btn-example.destaque {
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
   /* ── Loading overlay ── */
   #loading-overlay {
     display: none;
@@ -580,10 +586,13 @@
 
 <div class="submit-area">
   <button class="btn-generate" id="btn-generate">
-    <span>✨</span> Gerar minha lista
+    <span>✨</span> Gerar minha lista com IA
   </button>
-  <button class="btn-example" id="btn-example">
-    Usar lista de exemplo →
+  <button class="btn-example destaque" id="btn-minha-lista">
+    📋 Abrir minha lista de hoje
+  </button>
+  <button class="btn-example" id="btn-manual">
+    ✏️ Começar lista do zero (manual)
   </button>
 </div>
 
@@ -666,9 +675,15 @@ document.getElementById('estilo-grid').addEventListener('click', e => {
   estilo = card.dataset.val;
 });
 
-// ── Use example list ───────────────────────────────
-document.getElementById('btn-example').addEventListener('click', () => {
+// ── Minha lista (lista fixa original) ─────────────
+document.getElementById('btn-minha-lista').addEventListener('click', () => {
   localStorage.removeItem('mercado-generated-list');
+  window.location.href = 'lista.html';
+});
+
+// ── Lista manual (em branco) ───────────────────────
+document.getElementById('btn-manual').addEventListener('click', () => {
+  localStorage.setItem('mercado-generated-list', JSON.stringify([]));
   localStorage.removeItem('mercado-state-v1');
   window.location.href = 'lista.html';
 });
