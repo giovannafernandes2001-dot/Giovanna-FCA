@@ -55,7 +55,7 @@ function formatDate(dateStr: string) {
 }
 
 function getYouTubeId(url: string): string | null {
-  const match = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+  const match = url.match(/(?:v=|youtu\.be\/|live\/)([A-Za-z0-9_-]{11})/)
   return match ? match[1] : null
 }
 

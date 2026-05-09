@@ -41,11 +41,7 @@ export default function DevotionalListItem({
       >
         <div className="mt-0.5 shrink-0">
           {completed ? (
-            <CheckCircle
-              size={28}
-              className="text-brand-gold animate-check"
-              fill="currentColor"
-            />
+            <CheckCircle size={28} className="text-brand-gold animate-check" />
           ) : (
             <Circle size={28} className="text-cream-dark" />
           )}
