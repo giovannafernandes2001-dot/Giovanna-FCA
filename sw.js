@@ -1,5 +1,5 @@
-const CACHE = 'mercado-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'mercado-v2';
+const ASSETS = ['/', '/index.html', '/lista.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(

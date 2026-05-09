@@ -11,8 +11,8 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icons/icon.svg">
 <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
-<title>🛒 Lista do Mercado</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>🛒 Criar Minha Lista</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --cream: #FAF7F2;
@@ -34,1153 +34,745 @@
     font-family: 'DM Sans', sans-serif;
     color: var(--ink);
     min-height: 100vh;
-    padding-bottom: calc(80px + var(--safe-bottom));
+    padding-bottom: calc(40px + var(--safe-bottom));
   }
 
-  /* ── Install Banner ── */
-  #install-banner {
-    display: none;
+  /* ── Hero ── */
+  .hero {
     background: var(--ink);
     color: white;
-    padding: 12px 20px;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-  }
-  #install-banner.visible { display: flex; }
-  #install-banner span { flex: 1; line-height: 1.4; }
-  #install-banner button {
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 7px 16px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  #install-close {
-    background: none !important;
-    padding: 4px 8px !important;
-    opacity: 0.6;
-    font-size: 16px !important;
-  }
-
-  /* ── iOS install tip ── */
-  #ios-tip {
-    display: none;
-    background: var(--ink);
-    color: white;
-    padding: 14px 20px;
-    font-size: 13px;
-    line-height: 1.6;
+    padding: 48px 24px 36px;
     text-align: center;
   }
-  #ios-tip.visible { display: block; }
-  #ios-tip strong { color: var(--accent); }
 
-  /* ── Header ── */
-  header {
-    background: var(--warm-white);
-    border-bottom: 1px solid var(--border);
-    padding: 20px 20px 14px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-  }
+  .hero-emoji { font-size: 52px; margin-bottom: 12px; display: block; }
 
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-
-  .header-left { display: flex; align-items: baseline; gap: 10px; }
-
-  h1 {
+  .hero h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    font-weight: 600;
+    font-size: 28px;
+    font-weight: 700;
     letter-spacing: -0.5px;
+    margin-bottom: 8px;
   }
 
-  .subtitle {
-    font-size: 12px;
-    color: var(--muted);
+  .hero p {
+    font-size: 14px;
+    opacity: 0.6;
     font-weight: 300;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    line-height: 1.5;
   }
 
-  .btn-reset {
-    background: none;
+  /* ── Form layout ── */
+  .form-body {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .card {
+    background: var(--warm-white);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 16px;
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 12px;
-    color: var(--muted);
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-  }
-  .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
-
-  .totals-bar {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
   }
 
-  .total-chip {
-    background: var(--accent-light);
-    border-radius: 20px;
-    padding: 5px 13px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .total-chip.green { background: var(--green-light); color: var(--green); }
-
-  .progress-bar {
-    flex: 1;
-    min-width: 100px;
-    height: 4px;
-    background: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--green));
-    border-radius: 4px;
-    transition: width 0.4s ease;
-  }
-
-  /* ── Sections ── */
-  .section { margin: 20px 16px 0; }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 0 8px;
-    border-bottom: 2px solid var(--ink);
-    margin-bottom: 4px;
-  }
-
-  .section-title {
+  .card-title {
     font-family: 'Playfair Display', serif;
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-  }
-
-  .section-count {
-    font-size: 11px;
-    color: var(--muted);
-    margin-left: auto;
-  }
-
-  /* ── Items ── */
-  .item {
-    background: var(--warm-white);
-    border-radius: 12px;
-    margin: 6px 0;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    transition: all 0.25s ease;
-  }
-
-  .item.checked {
-    opacity: 0.55;
-    border-color: var(--green);
-    background: var(--green-light);
-  }
-
-  .item-main {
+    margin-bottom: 14px;
     display: flex;
     align-items: center;
-    padding: 12px 14px;
-    gap: 12px;
+    gap: 8px;
+  }
+
+  /* ── Pessoas selector ── */
+  .pessoas-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pessoas-btn {
+    flex: 1;
+    min-width: 44px;
+    padding: 12px 6px;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
     cursor: pointer;
-    user-select: none;
+    text-align: center;
+    transition: all 0.2s;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .checkbox {
-    width: 22px;
-    height: 22px;
+  .pessoas-btn.active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Checkboxes ── */
+  .check-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .check-item.active {
+    background: var(--green-light);
+    border-color: var(--green);
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.2s;
+  }
+
+  .check-item.active .check-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .check-label { font-size: 13px; font-weight: 500; line-height: 1.2; }
+
+  /* ── Budget input ── */
+  .budget-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .budget-wrap:focus-within { border-color: var(--accent); }
+
+  .budget-symbol {
+    padding: 12px 8px 12px 16px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .budget-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 16px 12px 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .budget-input::placeholder { color: var(--border); font-weight: 300; }
+
+  /* ── Estilo cards ── */
+  .estilo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .estilo-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .estilo-card.active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+  }
+
+  .estilo-emoji { font-size: 22px; }
+
+  .estilo-text { flex: 1; }
+  .estilo-title { font-size: 14px; font-weight: 500; }
+  .estilo-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .estilo-radio {
+    width: 18px;
+    height: 18px;
     border: 2px solid var(--border);
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 12px;
+    transition: all 0.2s;
   }
 
-  .item.checked .checkbox {
-    background: var(--green);
-    border-color: var(--green);
-    color: white;
+  .estilo-card.active .estilo-radio {
+    border-color: var(--accent);
+    background: var(--accent);
   }
 
-  .item-info { flex: 1; min-width: 0; }
-
-  .item-name {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.3;
-    transition: all 0.2s ease;
+  .estilo-card.active .estilo-radio::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
   }
 
-  .item.checked .item-name {
-    text-decoration: line-through;
-    text-decoration-color: var(--green);
-    color: var(--muted);
-  }
-
-  .item-qty {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 300;
-    margin-top: 1px;
-  }
-
-  .item-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  .price-input-wrap {
-    display: flex;
-    align-items: center;
+  /* ── Textarea ── */
+  .obs-textarea {
+    width: 100%;
     background: var(--cream);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    font-size: 13px;
-  }
-
-  .price-symbol {
-    padding: 5px 4px 5px 8px;
-    color: var(--muted);
-    font-size: 12px;
-  }
-
-  .price-input {
-    border: none;
-    background: transparent;
-    width: 62px;
-    padding: 5px 6px 5px 2px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--ink);
     outline: none;
-    -webkit-appearance: none;
+    resize: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
   }
 
-  .price-input::placeholder { color: var(--border); }
+  .obs-textarea:focus { border-color: var(--accent); }
+  .obs-textarea::placeholder { color: var(--border); }
 
-  .item-subtotal {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--accent);
-    min-width: 50px;
-    text-align: right;
-  }
-
-  .tip-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 4px;
-    border-radius: 6px;
-    transition: background 0.15s;
-    line-height: 1;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .tip-btn:hover { background: var(--accent-light); }
-
-  .tip-panel {
-    display: none;
-    padding: 10px 14px 12px 48px;
-    border-top: 1px dashed var(--border);
-    background: var(--cream);
-    font-size: 12.5px;
-    color: var(--muted);
-    line-height: 1.6;
-    animation: slideDown 0.2s ease;
-  }
-
-  .tip-panel.open { display: block; }
-
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .tip-line { margin-bottom: 3px; }
-  .tip-line:last-child { margin-bottom: 0; }
-
-  .premium-note {
-    background: var(--accent-light);
-    border: 1px dashed var(--accent);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: var(--accent);
-    margin: 8px 0 4px;
-    text-align: center;
-  }
-
-  /* ── Footer ── */
-  .grand-total-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--ink);
-    color: white;
-    padding: 14px 20px calc(14px + var(--safe-bottom));
+  /* ── API Key section ── */
+  .api-toggle {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 200;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .grand-label {
-    font-size: 13px;
-    font-weight: 300;
-    opacity: 0.7;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+  .api-toggle-icon {
+    font-size: 18px;
+    transition: transform 0.2s;
   }
 
-  .grand-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    font-weight: 600;
+  .api-toggle-icon.open { transform: rotate(180deg); }
+
+  .api-body {
+    display: none;
+    margin-top: 14px;
+  }
+
+  .api-body.open { display: block; }
+
+  .api-tip {
+    background: var(--accent-light);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12.5px;
     color: var(--accent);
+    line-height: 1.6;
+    margin-bottom: 12px;
   }
 
-  .items-done {
-    font-size: 11px;
-    opacity: 0.5;
-    margin-top: 2px;
-  }
+  .api-tip a { color: var(--accent); font-weight: 500; }
 
-  /* ── Extras ── */
-  .extras-form {
+  .api-input-wrap {
     display: flex;
     gap: 8px;
-    margin: 10px 0 6px;
   }
 
-  .extras-input {
+  .api-input {
     flex: 1;
-    background: var(--warm-white);
-    border: 1px solid var(--border);
+    background: var(--cream);
+    border: 2px solid var(--border);
     border-radius: 10px;
-    padding: 11px 14px;
+    padding: 10px 14px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--ink);
     outline: none;
     transition: border-color 0.2s;
+    min-width: 0;
   }
 
-  .extras-input:focus { border-color: var(--accent); }
-  .extras-input::placeholder { color: var(--border); }
+  .api-input:focus { border-color: var(--accent); }
+  .api-input::placeholder { color: var(--border); font-size: 12px; }
 
-  .btn-add {
-    background: var(--accent);
+  .api-save-btn {
+    background: var(--ink);
     color: white;
     border: none;
     border-radius: 10px;
-    padding: 11px 18px;
+    padding: 10px 16px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
     cursor: pointer;
     white-space: nowrap;
+  }
+
+  .api-status {
+    font-size: 12px;
+    margin-top: 8px;
+    color: var(--green);
+    min-height: 16px;
+  }
+
+  /* ── Submit ── */
+  .submit-area {
+    padding: 20px 16px 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .btn-generate {
+    width: 100%;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 18px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     transition: opacity 0.2s;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .btn-add:hover { opacity: 0.85; }
+  .btn-generate:hover { opacity: 0.88; }
+  .btn-generate:disabled { opacity: 0.5; cursor: default; }
 
-  .delete-btn {
+  .btn-example {
+    width: 100%;
     background: none;
-    border: none;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
     cursor: pointer;
-    font-size: 15px;
-    padding: 4px;
-    border-radius: 6px;
-    transition: background 0.15s;
-    line-height: 1;
-    opacity: 0.5;
-    -webkit-tap-highlight-color: transparent;
+    margin-top: 10px;
+    transition: all 0.2s;
   }
 
-  .delete-btn:hover { background: #fde8e8; opacity: 1; }
+  .btn-example:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Loading overlay ── */
+  #loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,28,28,0.85);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    color: white;
+    text-align: center;
+    padding: 24px;
+  }
+
+  #loading-overlay.visible { display: flex; }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .loading-sub { font-size: 13px; opacity: 0.6; }
+
+  /* ── Error ── */
+  .error-box {
+    display: none;
+    background: #fde8e8;
+    border: 1px solid #f5c0c0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #c0392b;
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+
+  .error-box.visible { display: block; }
 </style>
 </head>
 <body>
 
-<!-- Install banner (Android/Chrome) -->
-<div id="install-banner">
-  <span>📲 Instale o app na sua tela inicial para usar offline!</span>
-  <button id="install-btn">Instalar</button>
-  <button id="install-close" class="install-close">✕</button>
+<div class="hero">
+  <span class="hero-emoji">🛒</span>
+  <h1>Sua Lista do Mercado</h1>
+  <p>Preencha seu perfil e o Claude cria<br>uma lista personalizada para você</p>
 </div>
 
-<!-- iOS tip -->
-<div id="ios-tip">
-  📲 Para instalar: toque em <strong>Compartilhar ↑</strong> e depois em <strong>"Adicionar à Tela Inicial"</strong>
-  <br><button onclick="document.getElementById('ios-tip').classList.remove('visible')" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;margin-top:6px;">Fechar</button>
-</div>
+<div class="form-body">
 
-<header>
-  <div class="header-top">
-    <div class="header-left">
-      <h1>🛒 Mercado</h1>
-      <span class="subtitle">Semana · 2 pessoas</span>
+  <!-- Pessoas -->
+  <div class="card">
+    <div class="card-title">👥 Quantas pessoas na casa?</div>
+    <div class="pessoas-row" id="pessoas-row">
+      <button class="pessoas-btn" data-val="1">1</button>
+      <button class="pessoas-btn active" data-val="2">2</button>
+      <button class="pessoas-btn" data-val="3">3</button>
+      <button class="pessoas-btn" data-val="4">4</button>
+      <button class="pessoas-btn" data-val="5+">5+</button>
     </div>
-    <button class="btn-reset" id="btn-reset">↺ Resetar</button>
   </div>
-  <div class="totals-bar">
-    <div class="total-chip">💰 <span id="total-spent">R$ 0,00</span></div>
-    <div class="total-chip green">✅ <span id="items-checked">0</span> de <span id="items-total">0</span></div>
-    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
-  </div>
-</header>
 
-<div id="list-container"></div>
+  <!-- Restrições -->
+  <div class="card">
+    <div class="card-title">🚫 Restrições alimentares?</div>
+    <div class="check-grid" id="restricoes-grid">
+      <label class="check-item" data-val="sem glúten">
+        <div class="check-box"></div>
+        <span class="check-label">Sem glúten</span>
+      </label>
+      <label class="check-item" data-val="vegano">
+        <div class="check-box"></div>
+        <span class="check-label">Vegano</span>
+      </label>
+      <label class="check-item" data-val="vegetariano">
+        <div class="check-box"></div>
+        <span class="check-label">Vegetariano</span>
+      </label>
+      <label class="check-item" data-val="sem lactose">
+        <div class="check-box"></div>
+        <span class="check-label">Sem lactose</span>
+      </label>
+      <label class="check-item" data-val="sem frutos do mar">
+        <div class="check-box"></div>
+        <span class="check-label">Sem frutos do mar</span>
+      </label>
+      <label class="check-item" data-val="nenhuma" id="check-nenhuma">
+        <div class="check-box"></div>
+        <span class="check-label">Nenhuma ✓</span>
+      </label>
+    </div>
+  </div>
 
-<!-- Extras Section -->
-<div class="section" id="extras-section" style="margin-bottom: 20px;">
-  <div class="section-header">
-    <span style="font-size:18px">➕</span>
-    <span class="section-title">Itens Extras</span>
-    <span class="section-count" id="extras-count"></span>
+  <!-- Orçamento -->
+  <div class="card">
+    <div class="card-title">💰 Orçamento semanal aproximado</div>
+    <div class="budget-wrap">
+      <span class="budget-symbol">R$</span>
+      <input type="number" id="orcamento" class="budget-input"
+             placeholder="Ex: 300" min="0" step="10" inputmode="numeric" />
+    </div>
   </div>
-  <div id="extras-list"></div>
-  <div class="extras-form">
-    <input type="text" id="extras-input" class="extras-input" placeholder="Ex: Arroz, Sabão em pó…" autocomplete="off" />
-    <button id="extras-add-btn" class="btn-add">+ Adicionar</button>
+
+  <!-- Estilo -->
+  <div class="card">
+    <div class="card-title">🍽️ Como você costuma comer?</div>
+    <div class="estilo-grid" id="estilo-grid">
+      <div class="estilo-card active" data-val="simples e prático, refeições do dia a dia sem muita elaboração">
+        <span class="estilo-emoji">🥘</span>
+        <div class="estilo-text">
+          <div class="estilo-title">Simples e prático</div>
+          <div class="estilo-desc">Comida caseira, rápida de fazer</div>
+        </div>
+        <div class="estilo-radio"></div>
+      </div>
+      <div class="estilo-card" data-val="equilibrado e saudável, com variedade de legumes, proteínas magras e menos processados">
+        <span class="estilo-emoji">🥗</span>
+        <div class="estilo-text">
+          <div class="estilo-title">Equilibrado e saudável</div>
+          <div class="estilo-desc">Variedade, legumes, proteínas magras</div>
+        </div>
+        <div class="estilo-radio"></div>
+      </div>
+      <div class="estilo-card" data-val="gosto de cozinhar receitas elaboradas, com ingredientes especiais e técnicas mais avançadas">
+        <span class="estilo-emoji">👨‍🍳</span>
+        <div class="estilo-text">
+          <div class="estilo-title">Gosto de cozinhar</div>
+          <div class="estilo-desc">Receitas elaboradas, ingredientes especiais</div>
+        </div>
+        <div class="estilo-radio"></div>
+      </div>
+    </div>
   </div>
+
+  <!-- Observações -->
+  <div class="card">
+    <div class="card-title">✏️ Alguma preferência especial?</div>
+    <textarea id="observacoes" class="obs-textarea" rows="3"
+      placeholder="Ex: adoro comida italiana, tenho criança pequena, prefiro marcas nacionais…"></textarea>
+  </div>
+
+  <!-- API Key -->
+  <div class="card">
+    <div class="api-toggle" id="api-toggle">
+      <div class="card-title" style="margin-bottom:0">🔑 Chave da API Claude</div>
+      <span class="api-toggle-icon" id="api-icon">▼</span>
+    </div>
+    <div class="api-body" id="api-body">
+      <div class="api-tip" style="margin-top:14px">
+        <strong>O que é isso?</strong> Para gerar listas personalizadas, o app usa a inteligência artificial Claude (da Anthropic). É necessário uma chave de acesso gratuita.<br><br>
+        <strong>Como obter:</strong><br>
+        1. Acesse <strong>console.anthropic.com</strong><br>
+        2. Crie uma conta gratuita<br>
+        3. Vá em <strong>API Keys → Create Key</strong><br>
+        4. Cole a chave aqui abaixo
+      </div>
+      <div class="api-input-wrap">
+        <input type="password" id="api-key-input" class="api-input"
+               placeholder="sk-ant-…" autocomplete="off" />
+        <button id="api-save-btn" class="api-save-btn">Salvar</button>
+      </div>
+      <div class="api-status" id="api-status"></div>
+    </div>
+  </div>
+
+  <div class="error-box" id="error-box"></div>
+
+</div><!-- /form-body -->
+
+<div class="submit-area">
+  <button class="btn-generate" id="btn-generate">
+    <span>✨</span> Gerar minha lista
+  </button>
+  <button class="btn-example" id="btn-example">
+    Usar lista de exemplo →
+  </button>
 </div>
 
-<div class="grand-total-bar">
-  <div>
-    <div class="grand-label">Total estimado</div>
-    <div class="items-done" id="footer-count"></div>
-  </div>
-  <div class="grand-value" id="grand-total">R$ 0,00</div>
+<!-- Loading -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-title">Criando sua lista…</div>
+  <div class="loading-sub">O Claude está pensando nos melhores itens para você</div>
 </div>
 
 <script>
-const STORAGE_KEY = 'mercado-state-v1';
+const API_KEY_STORAGE = 'mercado-claude-api-key';
 
-const sections = [
+// ── Restore saved values ───────────────────────────
+const savedKey = localStorage.getItem(API_KEY_STORAGE);
+if (savedKey) {
+  document.getElementById('api-key-input').value = savedKey;
+  document.getElementById('api-status').textContent = '✅ Chave salva';
+  document.getElementById('api-body').classList.add('open');
+  document.getElementById('api-icon').classList.add('open');
+}
+
+// ── API key toggle ─────────────────────────────────
+document.getElementById('api-toggle').addEventListener('click', () => {
+  document.getElementById('api-body').classList.toggle('open');
+  document.getElementById('api-icon').classList.toggle('open');
+});
+
+document.getElementById('api-save-btn').addEventListener('click', () => {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) return;
+  localStorage.setItem(API_KEY_STORAGE, key);
+  document.getElementById('api-status').textContent = '✅ Chave salva com sucesso!';
+});
+
+// ── Pessoas selector ───────────────────────────────
+let pessoas = '2';
+document.getElementById('pessoas-row').addEventListener('click', e => {
+  const btn = e.target.closest('.pessoas-btn');
+  if (!btn) return;
+  document.querySelectorAll('.pessoas-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  pessoas = btn.dataset.val;
+});
+
+// ── Restrições checkboxes ──────────────────────────
+const restricoesSelected = new Set();
+document.getElementById('restricoes-grid').addEventListener('click', e => {
+  const item = e.target.closest('.check-item');
+  if (!item) return;
+  const val = item.dataset.val;
+
+  if (val === 'nenhuma') {
+    restricoesSelected.clear();
+    restricoesSelected.add('nenhuma');
+    document.querySelectorAll('.check-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+    return;
+  }
+
+  document.getElementById('check-nenhuma').classList.remove('active');
+  restricoesSelected.delete('nenhuma');
+
+  if (restricoesSelected.has(val)) {
+    restricoesSelected.delete(val);
+    item.classList.remove('active');
+  } else {
+    restricoesSelected.add(val);
+    item.classList.add('active');
+  }
+});
+
+// ── Estilo selector ────────────────────────────────
+let estilo = document.querySelector('.estilo-card.active').dataset.val;
+document.getElementById('estilo-grid').addEventListener('click', e => {
+  const card = e.target.closest('.estilo-card');
+  if (!card) return;
+  document.querySelectorAll('.estilo-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  estilo = card.dataset.val;
+});
+
+// ── Use example list ───────────────────────────────
+document.getElementById('btn-example').addEventListener('click', () => {
+  localStorage.removeItem('mercado-generated-list');
+  localStorage.removeItem('mercado-state-v1');
+  window.location.href = 'lista.html';
+});
+
+// ── Generate ───────────────────────────────────────
+document.getElementById('btn-generate').addEventListener('click', async () => {
+  const apiKey = localStorage.getItem(API_KEY_STORAGE) ||
+                 document.getElementById('api-key-input').value.trim();
+
+  const errorBox = document.getElementById('error-box');
+  errorBox.classList.remove('visible');
+
+  if (!apiKey) {
+    document.getElementById('api-body').classList.add('open');
+    document.getElementById('api-icon').classList.add('open');
+    errorBox.textContent = '⚠️ Por favor, insira sua chave da API Claude para gerar uma lista personalizada. Ou use a lista de exemplo abaixo.';
+    errorBox.classList.add('visible');
+    return;
+  }
+
+  const orcamento = document.getElementById('orcamento').value || 'não definido';
+  const obs       = document.getElementById('observacoes').value.trim();
+  const restricoes = restricoesSelected.size === 0 || restricoesSelected.has('nenhuma')
+    ? 'nenhuma restrição'
+    : Array.from(restricoesSelected).join(', ');
+
+  const prompt = `Você é um assistente de compras brasileiro experiente. Com base no perfil abaixo, gere uma lista de compras semanal personalizada e prática.
+
+PERFIL DO USUÁRIO:
+- Pessoas na casa: ${pessoas}
+- Restrições alimentares: ${restricoes}
+- Orçamento semanal: R$ ${orcamento}
+- Estilo de alimentação: ${estilo}
+${obs ? `- Observações: ${obs}` : ''}
+
+Retorne APENAS um JSON válido (sem markdown, sem texto extra, sem explicações) com exatamente este formato:
+[
   {
-    emoji: "🥩",
-    title: "Proteínas",
-    items: [
+    "emoji": "🥩",
+    "title": "Nome da Seção",
+    "items": [
       {
-        name: "Acém",
-        qty: "2,5 kg",
-        qtdUnits: 1,
-        tips: [
-          "🔪 Peça no açougue: 1 kg moído + 1,5 kg em cubos médios",
-          "💡 Se o açém estiver caro, músculo também desfia muito bem e costuma ser mais barato",
-          "📌 Preço médio: R$25–35/kg dependendo do mercado",
-          "✅ Escolha peças com gordura marmoreada — fica mais suculento"
-        ]
-      }
-    ]
-  },
-  {
-    emoji: "🧀",
-    title: "Laticínios & Frios",
-    items: [
-      {
-        name: "Manteiga Itambé",
-        qty: "pote grande",
-        qtdUnits: 1,
-        tips: [
-          "💡 Se estiver cara, Aviação ou Qualy são alternativas decentes",
-          "📌 Preço médio pote grande: R$22–30",
-          "🍪 Essencial pra receita de cookies — não substitua por margarina"
-        ]
-      },
-      {
-        name: "Muçarela fatiada",
-        qty: "2 embalagens",
-        qtdUnits: 2,
-        tips: [
-          "💡 Confira o peso por embalagem — algumas têm 150g, outras 200g",
-          "📌 Preço médio: R$8–14 por embalagem",
-          "✅ Prefira as fatiadas mais espessas para gratinar melhor"
-        ]
-      },
-      {
-        name: "Queijo Minas",
-        qty: "1 peça",
-        qtdUnits: 1,
-        tips: [
-          "🥪 Vai ser a base dos mistos quentes — escolha um fresco ou meia-cura",
-          "💡 Meia-cura derrete melhor e tem sabor mais interessante",
-          "📌 Preço médio: R$18–28 dependendo do tamanho"
-        ]
-      },
-      {
-        name: "Presunto fatiado",
-        qty: "1 embalagem",
-        qtdUnits: 1,
-        tips: [
-          "📌 Preço médio: R$8–12 por embalagem",
-          "💡 Se quiser variar, peito de peru tem mais proteína e menos gordura",
-          "✅ Verifique a data — presunto fatiado tem validade curta"
-        ]
-      },
-      {
-        name: "Requeijão",
-        qty: "potinho 200g",
-        qtdUnits: 1,
-        tips: [
-          "📌 Preço médio: R$6–10",
-          "💡 Catupiry e Poços de Caldas são boas opções se o de costume estiver caro"
-        ]
-      }
-    ]
-  },
-  {
-    emoji: "🥦",
-    title: "Frescos",
-    items: [
-      {
-        name: "Cebola",
-        qty: "1 kg",
-        qtdUnits: 1,
-        tips: [
-          "✅ Escolha as firmes, sem manchas escuras ou brotos",
-          "📌 Preço médio: R$4–7/kg",
-          "💡 Base pra carne moída, ragù e sopa — vai sumir rápido"
-        ]
-      },
-      {
-        name: "Cenoura",
-        qty: "500g",
-        qtdUnits: 1,
-        tips: [
-          "🍲 Vai pra sopa e pode turbinar o ragù também",
-          "📌 Preço médio: R$4–6/kg",
-          "✅ Prefira as mais grossas — mais fácil de cortar em cubos"
-        ]
-      },
-      {
-        name: "Gengibre",
-        qty: "1 pedaço",
-        qtdUnits: 1,
-        tips: [
-          "🍵 Pra chá com limão — um pedacinho pequeno já dura dias",
-          "📌 Preço médio: R$3–6 pelo pedaço",
-          "✅ Casca lisa e firme = gengibre fresco. Enrugado = velho"
-        ]
-      },
-      {
-        name: "Limão",
-        qty: "6 unidades",
-        qtdUnits: 6,
-        tips: [
-          "🍋 Prefira o tahiti (verde) — mais suco e acidez ideal pro chá",
-          "📌 Preço médio: R$0,50–1,50 cada",
-          "✅ Aperte levemente — os mais macios têm mais suco"
-        ]
-      },
-      {
-        name: "Pimentão colorido",
-        qty: "2 unidades (não verde)",
-        qtdUnits: 2,
-        tips: [
-          "🍲 Pra sopa — vermelho e amarelo têm sabor suave e adocicado",
-          "💡 Evite o verde se quiser sabor menos intenso",
-          "📌 Preço médio: R$3–7 cada — o vermelho tende a ser mais barato"
-        ]
-      },
-      {
-        name: "Salsão",
-        qty: "1 maço",
-        qtdUnits: 1,
-        tips: [
-          "🍲 Essencial pra sopa — use só os talos, as folhas amarguem",
-          "📌 Preço médio: R$3–6 o maço",
-          "💡 Se não encontrar ou estiver caro, alho-poró é um substituto aceitável"
-        ]
-      },
-      {
-        name: "Tomilho",
-        qty: "1 maço",
-        qtdUnits: 1,
-        tips: [
-          "🌿 Fresco é sempre melhor — vai bem no ragù e na carne moída",
-          "💡 Se só tiver seco, use bem menos (1 col chá = ~1 ramo fresco)",
-          "📌 Preço médio: R$2–5 o maço"
-        ]
-      }
-    ]
-  },
-  {
-    emoji: "🛒",
-    title: "Despensa",
-    items: [
-      {
-        name: "Cacau 100% em pó",
-        qty: "1 lata",
-        qtdUnits: 1,
-        tips: [
-          "🍮 Pra o pudim de chia com leite de coco",
-          "✅ Confira que é 100% cacau, não achocolatado",
-          "📌 Preço médio: R$18–30 dependendo da marca"
-        ]
-      },
-      {
-        name: "Chocolate",
-        qty: "1 barra grande",
-        qtdUnits: 1,
-        tips: [
-          "🍪 Pra os cookies — quanto mais cacau (54%+), melhor o resultado",
-          "💡 Callebaut é ótimo mas caro; Harald Melken é uma boa alternativa mais acessível",
-          "📌 Preço médio barra grande: R$12–25"
-        ]
-      },
-      {
-        name: "Leite de coco",
-        qty: "2 caixinhas",
-        qtdUnits: 2,
-        tips: [
-          "🍮 Pra o pudim de chia",
-          "✅ Prefira o integral (não light) — fica muito mais cremoso",
-          "📌 Preço médio: R$5–8 cada"
-        ]
-      },
-      {
-        name: "Maple syrup",
-        qty: "1 frasco",
-        qtdUnits: 1,
-        tips: [
-          "💡 Se estiver muito caro, mel escuro é o substituto mais próximo em sabor",
-          "📌 Preço médio: R$25–50 dependendo da marca e tamanho",
-          "✅ Maple puro (100%) tem sabor muito superior ao flavored syrup"
-        ]
-      },
-      {
-        name: "Melaço",
-        qty: "1 frasco",
-        qtdUnits: 1,
-        tips: [
-          "📌 Preço médio: R$8–15",
-          "✅ Melaço de cana puro — verifique que não tem aditivos",
-          "💡 Costuma estar na seção de produtos naturais ou dietéticos"
-        ]
-      },
-      {
-        name: "Mostarda Dijon",
-        qty: "1 pote",
-        qtdUnits: 1,
-        tips: [
-          "💡 Maille e Amora são as marcas clássicas — Maille tem sabor mais intenso",
-          "📌 Preço médio: R$12–22",
-          "✅ Vai bem com a carne, em molhos e no misto quente"
-        ]
-      },
-      {
-        name: "Paçoquita diet",
-        qty: "1 pacote",
-        qtdUnits: 1,
-        tips: [
-          "💪 Boa pra acompanhar o whey no café da manhã",
-          "📌 Preço médio: R$8–15 o pacote"
-        ]
-      },
-      {
-        name: "Passata de tomate",
-        qty: "2 caixas",
-        qtdUnits: 2,
-        tips: [
-          "🍝 Base pra o ragù e pra sopa",
-          "💡 Mutti é excelente; Contadina é mais acessível e também boa",
-          "📌 Preço médio: R$6–12 cada",
-          "✅ Passata é mais lisa que pelati — ideal pra molhos longos"
-        ]
-      },
-      {
-        name: "Pão de forma",
-        qty: "2 pacotes",
-        qtdUnits: 2,
-        tips: [
-          "🍞 Um abre agora, o outro congela — dura muito mais",
-          "💡 Integral tem mais fibra e proteína que o branco",
-          "📌 Preço médio: R$8–14 por pacote"
-        ]
-      },
-      {
-        name: "Biscoito de leite maltado",
-        qty: "1 pacote",
-        qtdUnits: 1,
-        tips: [
-          "📌 Preço médio: R$6–10",
-          "💡 Maisena também funciona bem como substituto se não encontrar"
-        ]
-      },
-      {
-        name: "Toddy",
-        qty: "1 caixa/lata",
-        qtdUnits: 1,
-        tips: [
-          "☕ Clássico! Vai bem no leite sem lactose também",
-          "📌 Preço médio lata: R$12–18"
-        ]
-      }
-    ]
-  },
-  {
-    emoji: "🧴",
-    title: "Higiene & Limpeza",
-    items: [
-      {
-        name: "Papel higiênico",
-        qty: "1 pacote",
-        qtdUnits: 1,
-        tips: [
-          "💡 Folha dupla compensa mais no longo prazo",
-          "📌 Preço médio pacote 12 rolos: R$12–20"
-        ]
-      },
-      {
-        name: "Pasta de dente",
-        qty: "1 unidade",
-        qtdUnits: 1,
-        tips: ["📌 Preço médio: R$5–15 dependendo da marca"]
-      },
-      {
-        name: "Sabonete em barra",
-        qty: "1 unidade",
-        qtdUnits: 1,
-        tips: ["📌 Preço médio: R$3–8"]
-      },
-      {
-        name: "Sabão líquido roupas",
-        qty: "1 unidade",
-        qtdUnits: 1,
-        tips: [
-          "💡 OMO e Ariel têm bom custo-benefício; Tixan é mais barato",
-          "📌 Preço médio: R$15–30"
-        ]
-      }
-    ]
-  },
-  {
-    emoji: "🥤",
-    title: "Bebidas",
-    items: [
-      {
-        name: "Latinhas variadas",
-        qty: "à escolha",
-        qtdUnits: 1,
-        tips: [
-          "🥤 Schweppes, Fanta Zero, Chá de limão",
-          "💡 Comprar em pack costuma sair mais barato por unidade",
-          "📌 Preço médio latinha: R$4–7 cada"
-        ]
-      }
-    ]
-  },
-  {
-    emoji: "⭐",
-    title: "Premium",
-    items: [
-      {
-        name: "Biscoff",
-        qty: "1 pacote",
-        qtdUnits: 1,
-        tips: [
-          "⚠️ Conferir preço antes de colocar no carrinho",
-          "📌 Preço médio: R$25–40 — varia muito por loja",
-          "💡 Às vezes encontra mais barato no atacado ou importados"
-        ]
-      },
-      {
-        name: "Pasta de Biscoff",
-        qty: "1 pote",
-        qtdUnits: 1,
-        tips: [
-          "⚠️ Também conferir preço — item de luxo, não essencial",
-          "📌 Preço médio: R$35–60",
-          "💡 Se encontrar promoção, vale a pena ter em casa"
-        ]
+        "name": "Nome do item",
+        "qty": "quantidade ou descrição",
+        "qtdUnits": 1,
+        "tips": ["dica prática 1", "dica de preço ou substituto 2"]
       }
     ]
   }
-];
+]
 
-// ── State ──────────────────────────────────────────
-let prices  = {};
-let checked = {};
-let extras  = []; // [{ id, name }]
+Regras obrigatórias:
+- Entre 5 e 8 seções
+- Entre 3 e 8 itens por seção
+- Todas as dicas em português brasileiro informal
+- Cada item deve ter 2 a 4 dicas úteis (preço médio, como escolher, substitutos)
+- Adapte quantidade de itens ao número de pessoas
+- Respeite rigorosamente as restrições alimentares
+- Ajuste a sofisticação dos ingredientes ao estilo de alimentação
+- Inclua seção de higiene e limpeza básica`;
 
-function saveState() {
+  document.getElementById('loading-overlay').classList.add('visible');
+  document.getElementById('btn-generate').disabled = true;
+
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ prices, checked, extras }));
-  } catch (_) {}
-}
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const s = JSON.parse(raw);
-    prices  = s.prices  || {};
-    checked = s.checked || {};
-    extras  = s.extras  || [];
-  } catch (_) {}
-}
-
-// ── Formatting ─────────────────────────────────────
-function fmt(val) {
-  return 'R$ ' + val.toFixed(2).replace('.', ',');
-}
-
-// ── Totals ─────────────────────────────────────────
-function updateTotals() {
-  let total = 0;
-  let checkedCount = 0;
-  let totalItems = 0;
-
-  document.querySelectorAll('.item').forEach(el => {
-    totalItems++;
-    if (el.classList.contains('checked')) checkedCount++;
-  });
-
-  Object.entries(prices).forEach(([key, val]) => {
-    if (val > 0) {
-      const el = document.querySelector(`[data-key="${key}"]`);
-      const units = el ? parseInt(el.dataset.units) : 1;
-      total += val * units;
-    }
-  });
-
-  document.getElementById('total-spent').textContent  = fmt(total);
-  document.getElementById('grand-total').textContent   = fmt(total);
-  document.getElementById('items-checked').textContent = checkedCount;
-  document.getElementById('items-total').textContent   = totalItems;
-  document.getElementById('footer-count').textContent  =
-    checkedCount + ' de ' + totalItems + ' itens marcados';
-
-  const pct = totalItems > 0 ? (checkedCount / totalItems * 100) : 0;
-  document.getElementById('progress').style.width = pct + '%';
-
-  saveState();
-}
-
-// ── Build DOM ──────────────────────────────────────
-function buildList() {
-  const container = document.getElementById('list-container');
-
-  sections.forEach(section => {
-    const secDiv = document.createElement('div');
-    secDiv.className = 'section';
-
-    const hdr = document.createElement('div');
-    hdr.className = 'section-header';
-    hdr.innerHTML = `
-      <span style="font-size:18px">${section.emoji}</span>
-      <span class="section-title">${section.title}</span>
-      <span class="section-count">${section.items.length} item${section.items.length > 1 ? 's' : ''}</span>
-    `;
-    secDiv.appendChild(hdr);
-
-    if (section.title === 'Premium') {
-      const note = document.createElement('div');
-      note.className = 'premium-note';
-      note.textContent = '⚠️ Conferir preço antes de colocar no carrinho';
-      secDiv.appendChild(note);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `Erro ${res.status}`);
     }
 
-    section.items.forEach((item, idx) => {
-      const key = section.title + '_' + idx;
-      if (prices[key] === undefined) prices[key] = 0;
+    const data = await res.json();
+    const text = data.content[0].text.trim();
 
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'item' + (checked[key] ? ' checked' : '');
-      itemDiv.dataset.key   = key;
-      itemDiv.dataset.units = item.qtdUnits;
+    // Extract JSON even if there's extra text
+    const match = text.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Resposta inesperada do Claude. Tente novamente.');
+    const sections = JSON.parse(match[0]);
 
-      const main     = document.createElement('div');
-      main.className = 'item-main';
+    localStorage.setItem('mercado-generated-list', JSON.stringify(sections));
+    localStorage.removeItem('mercado-state-v1');
+    window.location.href = 'lista.html';
 
-      const checkbox     = document.createElement('div');
-      checkbox.className = 'checkbox';
-      if (checked[key]) checkbox.textContent = '✓';
-
-      const info     = document.createElement('div');
-      info.className = 'item-info';
-      info.innerHTML = `<div class="item-name">${item.name}</div><div class="item-qty">${item.qty}</div>`;
-
-      const actions     = document.createElement('div');
-      actions.className = 'item-actions';
-
-      const priceWrap     = document.createElement('div');
-      priceWrap.className = 'price-input-wrap';
-      priceWrap.innerHTML = `<span class="price-symbol">R$</span>`;
-
-      const input     = document.createElement('input');
-      input.className = 'price-input';
-      input.type        = 'number';
-      input.min         = '0';
-      input.step        = '0.01';
-      input.placeholder = '0,00';
-      input.inputMode   = 'decimal';
-      if (prices[key]) input.value = prices[key];
-
-      const subtotalEl     = document.createElement('div');
-      subtotalEl.className = 'item-subtotal';
-      if (prices[key] && item.qtdUnits > 1) {
-        subtotalEl.textContent = fmt(prices[key] * item.qtdUnits);
-      }
-
-      input.addEventListener('input', e => {
-        e.stopPropagation();
-        const val      = parseFloat(e.target.value) || 0;
-        prices[key]    = val;
-        const subtotal = val * item.qtdUnits;
-        subtotalEl.textContent = item.qtdUnits > 1 ? fmt(subtotal) : '';
-        updateTotals();
-      });
-
-      priceWrap.appendChild(input);
-      actions.appendChild(priceWrap);
-      actions.appendChild(subtotalEl);
-
-      const tipBtn     = document.createElement('button');
-      tipBtn.className = 'tip-btn';
-      tipBtn.textContent = '💡';
-      tipBtn.title       = 'Ver dicas';
-      actions.appendChild(tipBtn);
-
-      main.appendChild(checkbox);
-      main.appendChild(info);
-      main.appendChild(actions);
-
-      const tipPanel     = document.createElement('div');
-      tipPanel.className = 'tip-panel';
-      item.tips.forEach(tip => {
-        const line     = document.createElement('div');
-        line.className = 'tip-line';
-        line.textContent = tip;
-        tipPanel.appendChild(line);
-      });
-
-      tipBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        tipPanel.classList.toggle('open');
-      });
-
-      main.addEventListener('click', e => {
-        if (e.target === input || e.target === tipBtn) return;
-        itemDiv.classList.toggle('checked');
-        const isChecked      = itemDiv.classList.contains('checked');
-        checkbox.textContent = isChecked ? '✓' : '';
-        checked[key]         = isChecked;
-        updateTotals();
-      });
-
-      itemDiv.appendChild(main);
-      itemDiv.appendChild(tipPanel);
-      secDiv.appendChild(itemDiv);
-    });
-
-    container.appendChild(secDiv);
-  });
-
-  updateTotals();
-}
-
-// ── Extras ─────────────────────────────────────────
-function renderExtras() {
-  const list = document.getElementById('extras-list');
-  list.innerHTML = '';
-
-  extras.forEach(extra => {
-    const key = extra.id;
-    if (prices[key] === undefined) prices[key] = 0;
-
-    const itemDiv     = document.createElement('div');
-    itemDiv.className = 'item' + (checked[key] ? ' checked' : '');
-    itemDiv.dataset.key   = key;
-    itemDiv.dataset.units = '1';
-
-    const main     = document.createElement('div');
-    main.className = 'item-main';
-
-    const checkbox     = document.createElement('div');
-    checkbox.className = 'checkbox';
-    if (checked[key]) checkbox.textContent = '✓';
-
-    const info     = document.createElement('div');
-    info.className = 'item-info';
-    info.innerHTML = `<div class="item-name">${extra.name}</div>`;
-
-    const actions     = document.createElement('div');
-    actions.className = 'item-actions';
-
-    const priceWrap     = document.createElement('div');
-    priceWrap.className = 'price-input-wrap';
-    priceWrap.innerHTML = `<span class="price-symbol">R$</span>`;
-
-    const input     = document.createElement('input');
-    input.className = 'price-input';
-    input.type        = 'number';
-    input.min         = '0';
-    input.step        = '0.01';
-    input.placeholder = '0,00';
-    input.inputMode   = 'decimal';
-    if (prices[key]) input.value = prices[key];
-
-    input.addEventListener('input', e => {
-      e.stopPropagation();
-      prices[key] = parseFloat(e.target.value) || 0;
-      updateTotals();
-    });
-
-    priceWrap.appendChild(input);
-    actions.appendChild(priceWrap);
-
-    const delBtn     = document.createElement('button');
-    delBtn.className = 'delete-btn';
-    delBtn.textContent = '🗑️';
-    delBtn.title       = 'Remover item';
-    delBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      extras = extras.filter(ex => ex.id !== key);
-      delete prices[key];
-      delete checked[key];
-      saveState();
-      renderExtras();
-      updateTotals();
-    });
-    actions.appendChild(delBtn);
-
-    main.appendChild(checkbox);
-    main.appendChild(info);
-    main.appendChild(actions);
-
-    main.addEventListener('click', e => {
-      if (e.target === input || e.target === delBtn) return;
-      itemDiv.classList.toggle('checked');
-      const isChecked      = itemDiv.classList.contains('checked');
-      checkbox.textContent = isChecked ? '✓' : '';
-      checked[key]         = isChecked;
-      updateTotals();
-    });
-
-    itemDiv.appendChild(main);
-    list.appendChild(itemDiv);
-  });
-
-  const count = extras.length;
-  document.getElementById('extras-count').textContent =
-    count > 0 ? count + ' item' + (count > 1 ? 's' : '') : '';
-
-  updateTotals();
-}
-
-function addExtra() {
-  const input = document.getElementById('extras-input');
-  const name  = input.value.trim();
-  if (!name) return;
-  const id = 'extra_' + Date.now();
-  extras.push({ id, name });
-  input.value = '';
-  saveState();
-  renderExtras();
-}
-
-document.getElementById('extras-add-btn').addEventListener('click', addExtra);
-document.getElementById('extras-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addExtra();
-});
-
-// ── Reset ──────────────────────────────────────────
-document.getElementById('btn-reset').addEventListener('click', () => {
-  if (!confirm('Resetar toda a lista? Preços, marcações e itens extras serão apagados.')) return;
-  prices  = {};
-  checked = {};
-  extras  = [];
-  saveState();
-  document.getElementById('list-container').innerHTML = '';
-  buildList();
-  renderExtras();
-});
-
-// ── PWA Install ────────────────────────────────────
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('install-banner').classList.add('visible');
-});
-
-document.getElementById('install-btn').addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    document.getElementById('install-banner').classList.remove('visible');
+  } catch (err) {
+    document.getElementById('loading-overlay').classList.remove('visible');
+    document.getElementById('btn-generate').disabled = false;
+    errorBox.textContent = '❌ ' + (err.message || 'Erro ao conectar com o Claude. Verifique sua chave da API e tente novamente.');
+    errorBox.classList.add('visible');
   }
-  deferredPrompt = null;
 });
-
-document.getElementById('install-close').addEventListener('click', () => {
-  document.getElementById('install-banner').classList.remove('visible');
-});
-
-// Show iOS install tip once
-const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-const isStandalone = window.navigator.standalone === true;
-if (isIOS && !isStandalone && !localStorage.getItem('ios-tip-dismissed')) {
-  document.getElementById('ios-tip').classList.add('visible');
-  localStorage.setItem('ios-tip-dismissed', '1');
-}
-
-// ── Service Worker ─────────────────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
-
-// ── Init ───────────────────────────────────────────
-loadState();
-buildList();
-renderExtras();
 </script>
 </body>
 </html>
