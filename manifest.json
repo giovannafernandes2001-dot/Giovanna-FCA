@@ -1,0 +1,19 @@
+{
+  "name": "Lista do Mercado",
+  "short_name": "Mercado",
+  "description": "Lista de compras inteligente com dicas e controle de gastos",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF7F2",
+  "theme_color": "#C4956A",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

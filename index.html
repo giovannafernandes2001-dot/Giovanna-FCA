@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mercado">
+<meta name="theme-color" content="#C4956A">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon.svg">
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+<title>🛒 Lista do Mercado</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFFFFF;
+    --ink: #1C1C1C;
+    --muted: #8A8480;
+    --accent: #C4956A;
+    --accent-light: #F0E6D8;
+    --green: #6B8F71;
+    --green-light: #E8F0E9;
+    --border: #E8E3DC;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: calc(80px + var(--safe-bottom));
+  }
+
+  /* ── Install Banner ── */
+  #install-banner {
+    display: none;
+    background: var(--ink);
+    color: white;
+    padding: 12px 20px;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+  }
+  #install-banner.visible { display: flex; }
+  #install-banner span { flex: 1; line-height: 1.4; }
+  #install-banner button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #install-close {
+    background: none !important;
+    padding: 4px 8px !important;
+    opacity: 0.6;
+    font-size: 16px !important;
+  }
+
+  /* ── iOS install tip ── */
+  #ios-tip {
+    display: none;
+    background: var(--ink);
+    color: white;
+    padding: 14px 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+  }
+  #ios-tip.visible { display: block; }
+  #ios-tip strong { color: var(--accent); }
+
+  /* ── Header ── */
+  header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 20px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .header-left { display: flex; align-items: baseline; gap: 10px; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .btn-reset {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+  .totals-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .total-chip {
+    background: var(--accent-light);
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .total-chip.green { background: var(--green-light); color: var(--green); }
+
+  .progress-bar {
+    flex: 1;
+    min-width: 100px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Sections ── */
+  .section { margin: 20px 16px 0; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0 8px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .section-count {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* ── Items ── */
+  .item {
+    background: var(--warm-white);
+    border-radius: 12px;
+    margin: 6px 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: all 0.25s ease;
+  }
+
+  .item.checked {
+    opacity: 0.55;
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+
+  .item-main {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 12px;
+  }
+
+  .item.checked .checkbox {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .item-info { flex: 1; min-width: 0; }
+
+  .item-name {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3;
+    transition: all 0.2s ease;
+  }
+
+  .item.checked .item-name {
+    text-decoration: line-through;
+    text-decoration-color: var(--green);
+    color: var(--muted);
+  }
+
+  .item-qty {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-top: 1px;
+  }
+
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .price-input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+
+  .price-symbol {
+    padding: 5px 4px 5px 8px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .price-input {
+    border: none;
+    background: transparent;
+    width: 62px;
+    padding: 5px 6px 5px 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .price-input::placeholder { color: var(--border); }
+
+  .item-subtotal {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    min-width: 50px;
+    text-align: right;
+  }
+
+  .tip-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.15s;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tip-btn:hover { background: var(--accent-light); }
+
+  .tip-panel {
+    display: none;
+    padding: 10px 14px 12px 48px;
+    border-top: 1px dashed var(--border);
+    background: var(--cream);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    animation: slideDown 0.2s ease;
+  }
+
+  .tip-panel.open { display: block; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tip-line { margin-bottom: 3px; }
+  .tip-line:last-child { margin-bottom: 0; }
+
+  .premium-note {
+    background: var(--accent-light);
+    border: 1px dashed var(--accent);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--accent);
+    margin: 8px 0 4px;
+    text-align: center;
+  }
+
+  /* ── Footer ── */
+  .grand-total-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ink);
+    color: white;
+    padding: 14px 20px calc(14px + var(--safe-bottom));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 200;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+  }
+
+  .grand-label {
+    font-size: 13px;
+    font-weight: 300;
+    opacity: 0.7;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .grand-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .items-done {
+    font-size: 11px;
+    opacity: 0.5;
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Install banner (Android/Chrome) -->
+<div id="install-banner">
+  <span>📲 Instale o app na sua tela inicial para usar offline!</span>
+  <button id="install-btn">Instalar</button>
+  <button id="install-close" class="install-close">✕</button>
+</div>
+
+<!-- iOS tip -->
+<div id="ios-tip">
+  📲 Para instalar: toque em <strong>Compartilhar ↑</strong> e depois em <strong>"Adicionar à Tela Inicial"</strong>
+  <br><button onclick="document.getElementById('ios-tip').classList.remove('visible')" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;margin-top:6px;">Fechar</button>
+</div>
+
+<header>
+  <div class="header-top">
+    <div class="header-left">
+      <h1>🛒 Mercado</h1>
+      <span class="subtitle">Semana · 2 pessoas</span>
+    </div>
+    <button class="btn-reset" id="btn-reset">↺ Resetar</button>
+  </div>
+  <div class="totals-bar">
+    <div class="total-chip">💰 <span id="total-spent">R$ 0,00</span></div>
+    <div class="total-chip green">✅ <span id="items-checked">0</span> de <span id="items-total">0</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  </div>
+</header>
+
+<div id="list-container"></div>
+
+<div class="grand-total-bar">
+  <div>
+    <div class="grand-label">Total estimado</div>
+    <div class="items-done" id="footer-count"></div>
+  </div>
+  <div class="grand-value" id="grand-total">R$ 0,00</div>
+</div>
+
+<script>
+const STORAGE_KEY = 'mercado-state-v1';
+
+const sections = [
+  {
+    emoji: "🥩",
+    title: "Proteínas",
+    items: [
+      {
+        name: "Acém",
+        qty: "2,5 kg",
+        qtdUnits: 1,
+        tips: [
+          "🔪 Peça no açougue: 1 kg moído + 1,5 kg em cubos médios",
+          "💡 Se o açém estiver caro, músculo também desfia muito bem e costuma ser mais barato",
+          "📌 Preço médio: R$25–35/kg dependendo do mercado",
+          "✅ Escolha peças com gordura marmoreada — fica mais suculento"
+        ]
+      }
+    ]
+  },
+  {
+    emoji: "🧀",
+    title: "Laticínios & Frios",
+    items: [
+      {
+        name: "Manteiga Itambé",
+        qty: "pote grande",
+        qtdUnits: 1,
+        tips: [
+          "💡 Se estiver cara, Aviação ou Qualy são alternativas decentes",
+          "📌 Preço médio pote grande: R$22–30",
+          "🍪 Essencial pra receita de cookies — não substitua por margarina"
+        ]
+      },
+      {
+        name: "Muçarela fatiada",
+        qty: "2 embalagens",
+        qtdUnits: 2,
+        tips: [
+          "💡 Confira o peso por embalagem — algumas têm 150g, outras 200g",
+          "📌 Preço médio: R$8–14 por embalagem",
+          "✅ Prefira as fatiadas mais espessas para gratinar melhor"
+        ]
+      },
+      {
+        name: "Queijo Minas",
+        qty: "1 peça",
+        qtdUnits: 1,
+        tips: [
+          "🥪 Vai ser a base dos mistos quentes — escolha um fresco ou meia-cura",
+          "💡 Meia-cura derrete melhor e tem sabor mais interessante",
+          "📌 Preço médio: R$18–28 dependendo do tamanho"
+        ]
+      },
+      {
+        name: "Presunto fatiado",
+        qty: "1 embalagem",
+        qtdUnits: 1,
+        tips: [
+          "📌 Preço médio: R$8–12 por embalagem",
+          "💡 Se quiser variar, peito de peru tem mais proteína e menos gordura",
+          "✅ Verifique a data — presunto fatiado tem validade curta"
+        ]
+      },
+      {
+        name: "Requeijão",
+        qty: "potinho 200g",
+        qtdUnits: 1,
+        tips: [
+          "📌 Preço médio: R$6–10",
+          "💡 Catupiry e Poços de Caldas são boas opções se o de costume estiver caro"
+        ]
+      }
+    ]
+  },
+  {
+    emoji: "🥦",
+    title: "Frescos",
+    items: [
+      {
+        name: "Cebola",
+        qty: "1 kg",
+        qtdUnits: 1,
+        tips: [
+          "✅ Escolha as firmes, sem manchas escuras ou brotos",
+          "📌 Preço médio: R$4–7/kg",
+          "💡 Base pra carne moída, ragù e sopa — vai sumir rápido"
+        ]
+      },
+      {
+        name: "Cenoura",
+        qty: "500g",
+        qtdUnits: 1,
+        tips: [
+          "🍲 Vai pra sopa e pode turbinar o ragù também",
+          "📌 Preço médio: R$4–6/kg",
+          "✅ Prefira as mais grossas — mais fácil de cortar em cubos"
+        ]
+      },
+      {
+        name: "Gengibre",
+        qty: "1 pedaço",
+        qtdUnits: 1,
+        tips: [
+          "🍵 Pra chá com limão — um pedacinho pequeno já dura dias",
+          "📌 Preço médio: R$3–6 pelo pedaço",
+          "✅ Casca lisa e firme = gengibre fresco. Enrugado = velho"
+        ]
+      },
+      {
+        name: "Limão",
+        qty: "6 unidades",
+        qtdUnits: 6,
+        tips: [
+          "🍋 Prefira o tahiti (verde) — mais suco e acidez ideal pro chá",
+          "📌 Preço médio: R$0,50–1,50 cada",
+          "✅ Aperte levemente — os mais macios têm mais suco"
+        ]
+      },
+      {
+        name: "Pimentão colorido",
+        qty: "2 unidades (não verde)",
+        qtdUnits: 2,
+        tips: [
+          "🍲 Pra sopa — vermelho e amarelo têm sabor suave e adocicado",
+          "💡 Evite o verde se quiser sabor menos intenso",
+          "📌 Preço médio: R$3–7 cada — o vermelho tende a ser mais barato"
+        ]
+      },
+      {
+        name: "Salsão",
+        qty: "1 maço",
+        qtdUnits: 1,
+        tips: [
+          "🍲 Essencial pra sopa — use só os talos, as folhas amarguem",
+          "📌 Preço médio: R$3–6 o maço",
+          "💡 Se não encontrar ou estiver caro, alho-poró é um substituto aceitável"
+        ]
+      },
+      {
+        name: "Tomilho",
+        qty: "1 maço",
+        qtdUnits: 1,
+        tips: [
+          "🌿 Fresco é sempre melhor — vai bem no ragù e na carne moída",
+          "💡 Se só tiver seco, use bem menos (1 col chá = ~1 ramo fresco)",
+          "📌 Preço médio: R$2–5 o maço"
+        ]
+      }
+    ]
+  },
+  {
+    emoji: "🛒",
+    title: "Despensa",
+    items: [
+      {
+        name: "Cacau 100% em pó",
+        qty: "1 lata",
+        qtdUnits: 1,
+        tips: [
+          "🍮 Pra o pudim de chia com leite de coco",
+          "✅ Confira que é 100% cacau, não achocolatado",
+          "📌 Preço médio: R$18–30 dependendo da marca"
+        ]
+      },
+      {
+        name: "Chocolate",
+        qty: "1 barra grande",
+        qtdUnits: 1,
+        tips: [
+          "🍪 Pra os cookies — quanto mais cacau (54%+), melhor o resultado",
+          "💡 Callebaut é ótimo mas caro; Harald Melken é uma boa alternativa mais acessível",
+          "📌 Preço médio barra grande: R$12–25"
+        ]
+      },
+      {
+        name: "Leite de coco",
+        qty: "2 caixinhas",
+        qtdUnits: 2,
+        tips: [
+          "🍮 Pra o pudim de chia",
+          "✅ Prefira o integral (não light) — fica muito mais cremoso",
+          "📌 Preço médio: R$5–8 cada"
+        ]
+      },
+      {
+        name: "Maple syrup",
+        qty: "1 frasco",
+        qtdUnits: 1,
+        tips: [
+          "💡 Se estiver muito caro, mel escuro é o substituto mais próximo em sabor",
+          "📌 Preço médio: R$25–50 dependendo da marca e tamanho",
+          "✅ Maple puro (100%) tem sabor muito superior ao flavored syrup"
+        ]
+      },
+      {
+        name: "Melaço",
+        qty: "1 frasco",
+        qtdUnits: 1,
+        tips: [
+          "📌 Preço médio: R$8–15",
+          "✅ Melaço de cana puro — verifique que não tem aditivos",
+          "💡 Costuma estar na seção de produtos naturais ou dietéticos"
+        ]
+      },
+      {
+        name: "Mostarda Dijon",
+        qty: "1 pote",
+        qtdUnits: 1,
+        tips: [
+          "💡 Maille e Amora são as marcas clássicas — Maille tem sabor mais intenso",
+          "📌 Preço médio: R$12–22",
+          "✅ Vai bem com a carne, em molhos e no misto quente"
+        ]
+      },
+      {
+        name: "Paçoquita diet",
+        qty: "1 pacote",
+        qtdUnits: 1,
+        tips: [
+          "💪 Boa pra acompanhar o whey no café da manhã",
+          "📌 Preço médio: R$8–15 o pacote"
+        ]
+      },
+      {
+        name: "Passata de tomate",
+        qty: "2 caixas",
+        qtdUnits: 2,
+        tips: [
+          "🍝 Base pra o ragù e pra sopa",
+          "💡 Mutti é excelente; Contadina é mais acessível e também boa",
+          "📌 Preço médio: R$6–12 cada",
+          "✅ Passata é mais lisa que pelati — ideal pra molhos longos"
+        ]
+      },
+      {
+        name: "Pão de forma",
+        qty: "2 pacotes",
+        qtdUnits: 2,
+        tips: [
+          "🍞 Um abre agora, o outro congela — dura muito mais",
+          "💡 Integral tem mais fibra e proteína que o branco",
+          "📌 Preço médio: R$8–14 por pacote"
+        ]
+      },
+      {
+        name: "Biscoito de leite maltado",
+        qty: "1 pacote",
+        qtdUnits: 1,
+        tips: [
+          "📌 Preço médio: R$6–10",
+          "💡 Maisena também funciona bem como substituto se não encontrar"
+        ]
+      },
+      {
+        name: "Toddy",
+        qty: "1 caixa/lata",
+        qtdUnits: 1,
+        tips: [
+          "☕ Clássico! Vai bem no leite sem lactose também",
+          "📌 Preço médio lata: R$12–18"
+        ]
+      }
+    ]
+  },
+  {
+    emoji: "🧴",
+    title: "Higiene & Limpeza",
+    items: [
+      {
+        name: "Papel higiênico",
+        qty: "1 pacote",
+        qtdUnits: 1,
+        tips: [
+          "💡 Folha dupla compensa mais no longo prazo",
+          "📌 Preço médio pacote 12 rolos: R$12–20"
+        ]
+      },
+      {
+        name: "Pasta de dente",
+        qty: "1 unidade",
+        qtdUnits: 1,
+        tips: ["📌 Preço médio: R$5–15 dependendo da marca"]
+      },
+      {
+        name: "Sabonete em barra",
+        qty: "1 unidade",
+        qtdUnits: 1,
+        tips: ["📌 Preço médio: R$3–8"]
+      },
+      {
+        name: "Sabão líquido roupas",
+        qty: "1 unidade",
+        qtdUnits: 1,
+        tips: [
+          "💡 OMO e Ariel têm bom custo-benefício; Tixan é mais barato",
+          "📌 Preço médio: R$15–30"
+        ]
+      }
+    ]
+  },
+  {
+    emoji: "🥤",
+    title: "Bebidas",
+    items: [
+      {
+        name: "Latinhas variadas",
+        qty: "à escolha",
+        qtdUnits: 1,
+        tips: [
+          "🥤 Schweppes, Fanta Zero, Chá de limão",
+          "💡 Comprar em pack costuma sair mais barato por unidade",
+          "📌 Preço médio latinha: R$4–7 cada"
+        ]
+      }
+    ]
+  },
+  {
+    emoji: "⭐",
+    title: "Premium",
+    items: [
+      {
+        name: "Biscoff",
+        qty: "1 pacote",
+        qtdUnits: 1,
+        tips: [
+          "⚠️ Conferir preço antes de colocar no carrinho",
+          "📌 Preço médio: R$25–40 — varia muito por loja",
+          "💡 Às vezes encontra mais barato no atacado ou importados"
+        ]
+      },
+      {
+        name: "Pasta de Biscoff",
+        qty: "1 pote",
+        qtdUnits: 1,
+        tips: [
+          "⚠️ Também conferir preço — item de luxo, não essencial",
+          "📌 Preço médio: R$35–60",
+          "💡 Se encontrar promoção, vale a pena ter em casa"
+        ]
+      }
+    ]
+  }
+];
+
+// ── State ──────────────────────────────────────────
+let prices = {};
+let checked = {};
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ prices, checked }));
+  } catch (_) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    prices  = s.prices  || {};
+    checked = s.checked || {};
+  } catch (_) {}
+}
+
+// ── Formatting ─────────────────────────────────────
+function fmt(val) {
+  return 'R$ ' + val.toFixed(2).replace('.', ',');
+}
+
+// ── Totals ─────────────────────────────────────────
+function updateTotals() {
+  let total = 0;
+  let checkedCount = 0;
+  let totalItems = 0;
+
+  document.querySelectorAll('.item').forEach(el => {
+    totalItems++;
+    if (el.classList.contains('checked')) checkedCount++;
+  });
+
+  Object.entries(prices).forEach(([key, val]) => {
+    if (val > 0) {
+      const el = document.querySelector(`[data-key="${key}"]`);
+      const units = el ? parseInt(el.dataset.units) : 1;
+      total += val * units;
+    }
+  });
+
+  document.getElementById('total-spent').textContent  = fmt(total);
+  document.getElementById('grand-total').textContent   = fmt(total);
+  document.getElementById('items-checked').textContent = checkedCount;
+  document.getElementById('items-total').textContent   = totalItems;
+  document.getElementById('footer-count').textContent  =
+    checkedCount + ' de ' + totalItems + ' itens marcados';
+
+  const pct = totalItems > 0 ? (checkedCount / totalItems * 100) : 0;
+  document.getElementById('progress').style.width = pct + '%';
+
+  saveState();
+}
+
+// ── Build DOM ──────────────────────────────────────
+function buildList() {
+  const container = document.getElementById('list-container');
+
+  sections.forEach(section => {
+    const secDiv = document.createElement('div');
+    secDiv.className = 'section';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'section-header';
+    hdr.innerHTML = `
+      <span style="font-size:18px">${section.emoji}</span>
+      <span class="section-title">${section.title}</span>
+      <span class="section-count">${section.items.length} item${section.items.length > 1 ? 's' : ''}</span>
+    `;
+    secDiv.appendChild(hdr);
+
+    if (section.title === 'Premium') {
+      const note = document.createElement('div');
+      note.className = 'premium-note';
+      note.textContent = '⚠️ Conferir preço antes de colocar no carrinho';
+      secDiv.appendChild(note);
+    }
+
+    section.items.forEach((item, idx) => {
+      const key = section.title + '_' + idx;
+      if (prices[key] === undefined) prices[key] = 0;
+
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'item' + (checked[key] ? ' checked' : '');
+      itemDiv.dataset.key   = key;
+      itemDiv.dataset.units = item.qtdUnits;
+
+      const main     = document.createElement('div');
+      main.className = 'item-main';
+
+      const checkbox     = document.createElement('div');
+      checkbox.className = 'checkbox';
+      if (checked[key]) checkbox.textContent = '✓';
+
+      const info     = document.createElement('div');
+      info.className = 'item-info';
+      info.innerHTML = `<div class="item-name">${item.name}</div><div class="item-qty">${item.qty}</div>`;
+
+      const actions     = document.createElement('div');
+      actions.className = 'item-actions';
+
+      const priceWrap     = document.createElement('div');
+      priceWrap.className = 'price-input-wrap';
+      priceWrap.innerHTML = `<span class="price-symbol">R$</span>`;
+
+      const input     = document.createElement('input');
+      input.className = 'price-input';
+      input.type        = 'number';
+      input.min         = '0';
+      input.step        = '0.01';
+      input.placeholder = '0,00';
+      input.inputMode   = 'decimal';
+      if (prices[key]) input.value = prices[key];
+
+      const subtotalEl     = document.createElement('div');
+      subtotalEl.className = 'item-subtotal';
+      if (prices[key] && item.qtdUnits > 1) {
+        subtotalEl.textContent = fmt(prices[key] * item.qtdUnits);
+      }
+
+      input.addEventListener('input', e => {
+        e.stopPropagation();
+        const val      = parseFloat(e.target.value) || 0;
+        prices[key]    = val;
+        const subtotal = val * item.qtdUnits;
+        subtotalEl.textContent = item.qtdUnits > 1 ? fmt(subtotal) : '';
+        updateTotals();
+      });
+
+      priceWrap.appendChild(input);
+      actions.appendChild(priceWrap);
+      actions.appendChild(subtotalEl);
+
+      const tipBtn     = document.createElement('button');
+      tipBtn.className = 'tip-btn';
+      tipBtn.textContent = '💡';
+      tipBtn.title       = 'Ver dicas';
+      actions.appendChild(tipBtn);
+
+      main.appendChild(checkbox);
+      main.appendChild(info);
+      main.appendChild(actions);
+
+      const tipPanel     = document.createElement('div');
+      tipPanel.className = 'tip-panel';
+      item.tips.forEach(tip => {
+        const line     = document.createElement('div');
+        line.className = 'tip-line';
+        line.textContent = tip;
+        tipPanel.appendChild(line);
+      });
+
+      tipBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        tipPanel.classList.toggle('open');
+      });
+
+      main.addEventListener('click', e => {
+        if (e.target === input || e.target === tipBtn) return;
+        itemDiv.classList.toggle('checked');
+        const isChecked      = itemDiv.classList.contains('checked');
+        checkbox.textContent = isChecked ? '✓' : '';
+        checked[key]         = isChecked;
+        updateTotals();
+      });
+
+      itemDiv.appendChild(main);
+      itemDiv.appendChild(tipPanel);
+      secDiv.appendChild(itemDiv);
+    });
+
+    container.appendChild(secDiv);
+  });
+
+  updateTotals();
+}
+
+// ── Reset ──────────────────────────────────────────
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (!confirm('Resetar toda a lista? Preços e marcações serão apagados.')) return;
+  prices  = {};
+  checked = {};
+  saveState();
+  document.getElementById('list-container').innerHTML = '';
+  buildList();
+});
+
+// ── PWA Install ────────────────────────────────────
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('visible');
+});
+
+document.getElementById('install-btn').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    document.getElementById('install-banner').classList.remove('visible');
+  }
+  deferredPrompt = null;
+});
+
+document.getElementById('install-close').addEventListener('click', () => {
+  document.getElementById('install-banner').classList.remove('visible');
+});
+
+// Show iOS install tip once
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone === true;
+if (isIOS && !isStandalone && !localStorage.getItem('ios-tip-dismissed')) {
+  document.getElementById('ios-tip').classList.add('visible');
+  localStorage.setItem('ios-tip-dismissed', '1');
+}
+
+// ── Service Worker ─────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
+// ── Init ───────────────────────────────────────────
+loadState();
+buildList();
+</script>
+</body>
+</html>
