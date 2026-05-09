@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand-blue: #1A3C8C;
+  --color-brand-blue-light: #2B5AC7;
+  --color-brand-blue-muted: #1A3C8C1A;
+  --color-brand-gold: #E8A020;
+  --color-brand-gold-light: #F5B93D;
+  --color-brand-gold-muted: #E8A02020;
+  --color-cream: #F8F7F4;
+  --color-cream-dark: #F0EDE8;
+  --color-ink: #1A1A1A;
+  --color-ink-muted: #6B6B6B;
+  --color-surface: #FFFFFF;
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+:root {
+  --background: #F8F7F4;
+  --foreground: #1A1A1A;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 18px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+.prose-bible {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-style: italic;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #E8A020 transparent;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out both;
+}
+
+@keyframes check-pop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-check {
+  animation: check-pop 0.3s ease-out both;
+}
