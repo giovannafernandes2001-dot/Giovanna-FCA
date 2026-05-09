@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#FAF7F2"/>
+  <rect width="512" height="512" rx="100" fill="#C4956A" opacity="0.15"/>
+  <!-- Cart body -->
+  <path d="M120 160 h40 l44 176 h192 l36-128H204" fill="none" stroke="#C4956A" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Wheels -->
+  <circle cx="220" cy="370" r="24" fill="#C4956A"/>
+  <circle cx="340" cy="370" r="24" fill="#C4956A"/>
+  <!-- Checkmark inside cart -->
+  <path d="M230 248 l28 28 52-52" fill="none" stroke="#6B8F71" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

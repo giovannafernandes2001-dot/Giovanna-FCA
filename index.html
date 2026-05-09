@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mercado">
+<meta name="theme-color" content="#C4956A">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon.svg">
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+<title>🛒 Criar Minha Lista</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFFFFF;
+    --ink: #1C1C1C;
+    --muted: #8A8480;
+    --accent: #C4956A;
+    --accent-light: #F0E6D8;
+    --green: #6B8F71;
+    --green-light: #E8F0E9;
+    --border: #E8E3DC;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: calc(40px + var(--safe-bottom));
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--ink);
+    color: white;
+    padding: 48px 24px 36px;
+    text-align: center;
+  }
+
+  .hero-emoji { font-size: 52px; margin-bottom: 12px; display: block; }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    opacity: 0.6;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* ── Form layout ── */
+  .form-body {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .card {
+    background: var(--warm-white);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Pessoas selector ── */
+  .pessoas-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pessoas-btn {
+    flex: 1;
+    min-width: 44px;
+    padding: 12px 6px;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .pessoas-btn.active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Checkboxes ── */
+  .check-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .check-item.active {
+    background: var(--green-light);
+    border-color: var(--green);
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.2s;
+  }
+
+  .check-item.active .check-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .check-label { font-size: 13px; font-weight: 500; line-height: 1.2; }
+
+  /* ── Budget input ── */
+  .budget-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .budget-wrap:focus-within { border-color: var(--accent); }
+
+  .budget-symbol {
+    padding: 12px 8px 12px 16px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .budget-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 16px 12px 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .budget-input::placeholder { color: var(--border); font-weight: 300; }
+
+  /* ── Estilo cards ── */
+  .estilo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .estilo-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .estilo-card.active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+  }
+
+  .estilo-emoji { font-size: 22px; }
+
+  .estilo-text { flex: 1; }
+  .estilo-title { font-size: 14px; font-weight: 500; }
+  .estilo-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .estilo-radio {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .estilo-card.active .estilo-radio {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .estilo-card.active .estilo-radio::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  /* ── Textarea ── */
+  .obs-textarea {
+    width: 100%;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+
+  .obs-textarea:focus { border-color: var(--accent); }
+  .obs-textarea::placeholder { color: var(--border); }
+
+  /* ── API Key section ── */
+  .api-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .api-toggle-icon {
+    font-size: 18px;
+    transition: transform 0.2s;
+  }
+
+  .api-toggle-icon.open { transform: rotate(180deg); }
+
+  .api-body {
+    display: none;
+    margin-top: 14px;
+  }
+
+  .api-body.open { display: block; }
+
+  .api-tip {
+    background: var(--accent-light);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: var(--accent);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .api-tip a { color: var(--accent); font-weight: 500; }
+
+  .api-input-wrap {
+    display: flex;
+    gap: 8px;
+  }
+
+  .api-input {
+    flex: 1;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 0;
+  }
+
+  .api-input:focus { border-color: var(--accent); }
+  .api-input::placeholder { color: var(--border); font-size: 12px; }
+
+  .api-save-btn {
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .api-status {
+    font-size: 12px;
+    margin-top: 8px;
+    color: var(--green);
+    min-height: 16px;
+  }
+
+  /* ── Submit ── */
+  .submit-area {
+    padding: 20px 16px 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .btn-generate {
+    width: 100%;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 18px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-generate:hover { opacity: 0.88; }
+  .btn-generate:disabled { opacity: 0.5; cursor: default; }
+
+  .btn-example {
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+  }
+
+  .btn-example:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-example.destaque {
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── Loading overlay ── */
+  #loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,28,28,0.85);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    color: white;
+    text-align: center;
+    padding: 24px;
+  }
+
+  #loading-overlay.visible { display: flex; }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .loading-sub { font-size: 13px; opacity: 0.6; }
+
+  /* ── Error ── */
+  .error-box {
+    display: none;
+    background: #fde8e8;
+    border: 1px solid #f5c0c0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #c0392b;
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+
+  .error-box.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-emoji">🛒</span>
+  <h1>Sua Lista do Mercado</h1>
+  <p>Preencha seu perfil e o Claude cria<br>uma lista personalizada para você</p>
+</div>
+
+<div class="form-body">
+
+  <!-- Pessoas -->
+  <div class="card">
+    <div class="card-title">👥 Quantas pessoas na casa?</div>
+    <div class="pessoas-row" id="pessoas-row">
+      <button class="pessoas-btn" data-val="1">1</button>
+      <button class="pessoas-btn active" data-val="2">2</button>
+      <button class="pessoas-btn" data-val="3">3</button>
+      <button class="pessoas-btn" data-val="4">4</button>
+      <button class="pessoas-btn" data-val="5+">5+</button>
+    </div>
+  </div>
+
+  <!-- Restrições -->
+  <div class="card">
+    <div class="card-title">🚫 Restrições alimentares?</div>
+    <div class="check-grid" id="restricoes-grid">
+      <label class="check-item" data-val="sem glúten">
+        <div class="check-box"></div>
+        <span class="check-label">Sem glúten</span>
+      </label>
+      <label class="check-item" data-val="vegano">
+        <div class="check-box"></div>
+        <span class="check-label">Vegano</span>
+      </label>
+      <label class="check-item" data-val="vegetariano">
+        <div class="check-box"></div>
+        <span class="check-label">Vegetariano</span>
+      </label>
+      <label class="check-item" data-val="sem lactose">
+        <div class="check-box"></div>
+        <span class="check-label">Sem lactose</span>
+      </label>
+      <label class="check-item" data-val="sem frutos do mar">
+        <div class="check-box"></div>
+        <span class="check-label">Sem frutos do mar</span>
+      </label>
+      <label class="check-item" data-val="nenhuma" id="check-nenhuma">
+        <div class="check-box"></div>
+        <span class="check-label">Nenhuma ✓</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Orçamento -->
+  <div class="card">
+    <div class="card-title">💰 Orçamento semanal aproximado</div>
+    <div class="budget-wrap">
+      <span class="budget-symbol">R$</span>
+      <input type="number" id="orcamento" class="budget-input"
+             placeholder="Ex: 300" min="0" step="10" inputmode="numeric" />
+    </div>
+  </div>
+
+  <!-- Estilo -->
+  <div class="card">
+    <div class="card-title">🍽️ Como você costuma comer?</div>
+    <div class="estilo-grid" id="estilo-grid">
+      <div class="estilo-card active" data-val="simples e prático, refeições do dia a dia sem muita elaboração">
+        <span class="estilo-emoji">🥘</span>
+        <div class="estilo-text">
+          <div class="estilo-title">Simples e prático</div>
+          <div class="estilo-desc">Comida caseira, rápida de fazer</div>
+        </div>
+        <div class="estilo-radio"></div>
+      </div>
+      <div class="estilo-card" data-val="equilibrado e saudável, com variedade de legumes, proteínas magras e menos processados">
+        <span class="estilo-emoji">🥗</span>
+        <div class="estilo-text">
+          <div class="estilo-title">Equilibrado e saudável</div>
+          <div class="estilo-desc">Variedade, legumes, proteínas magras</div>
+        </div>
+        <div class="estilo-radio"></div>
+      </div>
+      <div class="estilo-card" data-val="gosto de cozinhar receitas elaboradas, com ingredientes especiais e técnicas mais avançadas">
+        <span class="estilo-emoji">👨‍🍳</span>
+        <div class="estilo-text">
+          <div class="estilo-title">Gosto de cozinhar</div>
+          <div class="estilo-desc">Receitas elaboradas, ingredientes especiais</div>
+        </div>
+        <div class="estilo-radio"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Observações -->
+  <div class="card">
+    <div class="card-title">✏️ Alguma preferência especial?</div>
+    <textarea id="observacoes" class="obs-textarea" rows="3"
+      placeholder="Ex: adoro comida italiana, tenho criança pequena, prefiro marcas nacionais…"></textarea>
+  </div>
+
+  <!-- API Key -->
+  <div class="card">
+    <div class="api-toggle" id="api-toggle">
+      <div class="card-title" style="margin-bottom:0">🔑 Chave da API Claude</div>
+      <span class="api-toggle-icon" id="api-icon">▼</span>
+    </div>
+    <div class="api-body" id="api-body">
+      <div class="api-tip" style="margin-top:14px">
+        <strong>O que é isso?</strong> Para gerar listas personalizadas, o app usa a inteligência artificial Claude (da Anthropic). É necessário uma chave de acesso gratuita.<br><br>
+        <strong>Como obter:</strong><br>
+        1. Acesse <strong>console.anthropic.com</strong><br>
+        2. Crie uma conta gratuita<br>
+        3. Vá em <strong>API Keys → Create Key</strong><br>
+        4. Cole a chave aqui abaixo
+      </div>
+      <div class="api-input-wrap">
+        <input type="password" id="api-key-input" class="api-input"
+               placeholder="sk-ant-…" autocomplete="off" />
+        <button id="api-save-btn" class="api-save-btn">Salvar</button>
+      </div>
+      <div class="api-status" id="api-status"></div>
+    </div>
+  </div>
+
+  <div class="error-box" id="error-box"></div>
+
+</div><!-- /form-body -->
+
+<div class="submit-area">
+  <button class="btn-generate" id="btn-generate">
+    <span>✨</span> Gerar minha lista com IA
+  </button>
+  <button class="btn-example destaque" id="btn-minha-lista">
+    📋 Abrir minha lista de hoje
+  </button>
+  <button class="btn-example" id="btn-manual">
+    ✏️ Começar lista do zero (manual)
+  </button>
+</div>
+
+<!-- Loading -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-title">Criando sua lista…</div>
+  <div class="loading-sub">O Claude está pensando nos melhores itens para você</div>
+</div>
+
+<script>
+const API_KEY_STORAGE = 'mercado-claude-api-key';
+
+// ── Restore saved values ───────────────────────────
+const savedKey = localStorage.getItem(API_KEY_STORAGE);
+if (savedKey) {
+  document.getElementById('api-key-input').value = savedKey;
+  document.getElementById('api-status').textContent = '✅ Chave salva';
+  document.getElementById('api-body').classList.add('open');
+  document.getElementById('api-icon').classList.add('open');
+}
+
+// ── API key toggle ─────────────────────────────────
+document.getElementById('api-toggle').addEventListener('click', () => {
+  document.getElementById('api-body').classList.toggle('open');
+  document.getElementById('api-icon').classList.toggle('open');
+});
+
+document.getElementById('api-save-btn').addEventListener('click', () => {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) return;
+  localStorage.setItem(API_KEY_STORAGE, key);
+  document.getElementById('api-status').textContent = '✅ Chave salva com sucesso!';
+});
+
+// ── Pessoas selector ───────────────────────────────
+let pessoas = '2';
+document.getElementById('pessoas-row').addEventListener('click', e => {
+  const btn = e.target.closest('.pessoas-btn');
+  if (!btn) return;
+  document.querySelectorAll('.pessoas-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  pessoas = btn.dataset.val;
+});
+
+// ── Restrições checkboxes ──────────────────────────
+const restricoesSelected = new Set();
+document.getElementById('restricoes-grid').addEventListener('click', e => {
+  const item = e.target.closest('.check-item');
+  if (!item) return;
+  const val = item.dataset.val;
+
+  if (val === 'nenhuma') {
+    restricoesSelected.clear();
+    restricoesSelected.add('nenhuma');
+    document.querySelectorAll('.check-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+    return;
+  }
+
+  document.getElementById('check-nenhuma').classList.remove('active');
+  restricoesSelected.delete('nenhuma');
+
+  if (restricoesSelected.has(val)) {
+    restricoesSelected.delete(val);
+    item.classList.remove('active');
+  } else {
+    restricoesSelected.add(val);
+    item.classList.add('active');
+  }
+});
+
+// ── Estilo selector ────────────────────────────────
+let estilo = document.querySelector('.estilo-card.active').dataset.val;
+document.getElementById('estilo-grid').addEventListener('click', e => {
+  const card = e.target.closest('.estilo-card');
+  if (!card) return;
+  document.querySelectorAll('.estilo-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  estilo = card.dataset.val;
+});
+
+// ── Minha lista (lista fixa original) ─────────────
+document.getElementById('btn-minha-lista').addEventListener('click', () => {
+  localStorage.removeItem('mercado-generated-list');
+  window.location.href = 'lista.html';
+});
+
+// ── Lista manual (em branco) ───────────────────────
+document.getElementById('btn-manual').addEventListener('click', () => {
+  localStorage.setItem('mercado-generated-list', JSON.stringify([]));
+  localStorage.removeItem('mercado-state-v1');
+  window.location.href = 'lista.html';
+});
+
+// ── Generate ───────────────────────────────────────
+document.getElementById('btn-generate').addEventListener('click', async () => {
+  const apiKey = localStorage.getItem(API_KEY_STORAGE) ||
+                 document.getElementById('api-key-input').value.trim();
+
+  const errorBox = document.getElementById('error-box');
+  errorBox.classList.remove('visible');
+
+  if (!apiKey) {
+    document.getElementById('api-body').classList.add('open');
+    document.getElementById('api-icon').classList.add('open');
+    errorBox.textContent = '⚠️ Por favor, insira sua chave da API Claude para gerar uma lista personalizada. Ou use a lista de exemplo abaixo.';
+    errorBox.classList.add('visible');
+    return;
+  }
+
+  const orcamento = document.getElementById('orcamento').value || 'não definido';
+  const obs       = document.getElementById('observacoes').value.trim();
+  const restricoes = restricoesSelected.size === 0 || restricoesSelected.has('nenhuma')
+    ? 'nenhuma restrição'
+    : Array.from(restricoesSelected).join(', ');
+
+  const prompt = `Você é um assistente de compras brasileiro experiente. Com base no perfil abaixo, gere uma lista de compras semanal personalizada e prática.
+
+PERFIL DO USUÁRIO:
+- Pessoas na casa: ${pessoas}
+- Restrições alimentares: ${restricoes}
+- Orçamento semanal: R$ ${orcamento}
+- Estilo de alimentação: ${estilo}
+${obs ? `- Observações: ${obs}` : ''}
+
+Retorne APENAS um JSON válido (sem markdown, sem texto extra, sem explicações) com exatamente este formato:
+[
+  {
+    "emoji": "🥩",
+    "title": "Nome da Seção",
+    "items": [
+      {
+        "name": "Nome do item",
+        "qty": "quantidade ou descrição",
+        "qtdUnits": 1,
+        "tips": ["dica prática 1", "dica de preço ou substituto 2"]
+      }
+    ]
+  }
+]
+
+Regras obrigatórias:
+- Entre 5 e 8 seções
+- Entre 3 e 8 itens por seção
+- Todas as dicas em português brasileiro informal
+- Cada item deve ter 2 a 4 dicas úteis (preço médio, como escolher, substitutos)
+- Adapte quantidade de itens ao número de pessoas
+- Respeite rigorosamente as restrições alimentares
+- Ajuste a sofisticação dos ingredientes ao estilo de alimentação
+- Inclua seção de higiene e limpeza básica`;
+
+  document.getElementById('loading-overlay').classList.add('visible');
+  document.getElementById('btn-generate').disabled = true;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `Erro ${res.status}`);
+    }
+
+    const data = await res.json();
+    const text = data.content[0].text.trim();
+
+    // Extract JSON even if there's extra text
+    const match = text.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Resposta inesperada do Claude. Tente novamente.');
+    const sections = JSON.parse(match[0]);
+
+    localStorage.setItem('mercado-generated-list', JSON.stringify(sections));
+    localStorage.removeItem('mercado-state-v1');
+    window.location.href = 'lista.html';
+
+  } catch (err) {
+    document.getElementById('loading-overlay').classList.remove('visible');
+    document.getElementById('btn-generate').disabled = false;
+    errorBox.textContent = '❌ ' + (err.message || 'Erro ao conectar com o Claude. Verifique sua chave da API e tente novamente.');
+    errorBox.classList.add('visible');
+  }
+});
+</script>
+</body>
+</html>
