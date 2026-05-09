@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Globe, Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
@@ -11,7 +12,7 @@ import Input from '@/components/ui/Input'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -23,10 +24,23 @@ export default function LoginPage() {
     setLoading(true)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (error) {
-      setError('E-mail ou senha incorretos. Tente novamente.')
+    const { data: emailData, error: rpcError } = await supabase
+      .rpc('get_email_by_username', { p_username: username.trim() })
+
+    if (rpcError || !emailData) {
+      setError('Nome de login não encontrado.')
+      setLoading(false)
+      return
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: emailData,
+      password,
+    })
+
+    if (signInError) {
+      setError('Senha incorreta. Tente novamente.')
       setLoading(false)
       return
     }
@@ -39,7 +53,6 @@ export default function LoginPage() {
     <div className="min-h-screen bg-brand-blue flex flex-col items-center justify-center px-5 py-10">
       <div className="w-full max-w-sm flex flex-col items-center gap-8 animate-fade-in">
 
-        {/* Logo area */}
         <div className="flex flex-col items-center gap-3 text-white text-center">
           <div className="w-20 h-20 rounded-full bg-white/10 border-2 border-brand-gold flex items-center justify-center">
             <Globe size={44} className="text-brand-gold" />
@@ -50,7 +63,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Login card */}
         <div className="w-full bg-surface rounded-2xl shadow-xl p-6 flex flex-col gap-5">
           <div>
             <h2 className="font-serif text-2xl font-bold text-ink">Entrar</h2>
@@ -59,14 +71,13 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <Input
-              id="email"
-              label="E-mail"
-              type="email"
-              placeholder="seu@email.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              id="username"
+              label="Nome de login"
+              placeholder="seu nome de login"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
               required
-              autoComplete="email"
+              autoComplete="username"
             />
 
             <div className="flex flex-col gap-1.5">
@@ -107,8 +118,11 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-white/50 text-xs text-center">
-          Não tem acesso? Fale com a liderança da igreja.
+        <p className="text-white/70 text-sm text-center">
+          Não tem conta ainda?{' '}
+          <Link href="/cadastro" className="text-brand-gold font-semibold underline">
+            Criar conta
+          </Link>
         </p>
       </div>
     </div>

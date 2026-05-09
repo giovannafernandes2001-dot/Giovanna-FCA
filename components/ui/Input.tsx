@@ -2,17 +2,19 @@ import { InputHTMLAttributes, forwardRef } from 'react'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
+  hint?: string
   error?: string
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className = '', id, ...props }, ref) => (
+  ({ label, hint, error, className = '', id, ...props }, ref) => (
     <div className="flex flex-col gap-1.5">
       {label && (
         <label htmlFor={id} className="text-sm font-semibold text-ink">
           {label}
         </label>
       )}
+      {hint && <p className="text-xs text-ink-muted -mt-1">{hint}</p>}
       <input
         ref={ref}
         id={id}

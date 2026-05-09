@@ -5,6 +5,7 @@ import { mockDevotionals } from '@/data/mock'
 import type { Devotional } from '@/types'
 import Header from '@/components/Header'
 import DevotionalListItem from '@/components/DevotionalListItem'
+import PullToRefresh from '@/components/PullToRefresh'
 import { BookOpen, Tv } from 'lucide-react'
 import Link from 'next/link'
 
@@ -98,24 +99,26 @@ export default async function HomePage() {
         </Link>
 
         {/* Devotional list */}
-        <div className="flex flex-col gap-3">
-          {devotionals.length === 0 ? (
-            <div className="text-center py-12 text-ink-muted">
-              <BookOpen size={40} className="mx-auto mb-3 opacity-30" />
-              <p className="font-semibold">Nenhum devocional publicado ainda.</p>
-              <p className="text-sm mt-1">Volte em breve!</p>
-            </div>
-          ) : (
-            devotionals.map((d, i) => (
-              <DevotionalListItem
-                key={d.id}
-                devotional={d}
-                completed={completedIds.includes(d.id)}
-                index={i}
-              />
-            ))
-          )}
-        </div>
+        <PullToRefresh>
+          <div className="flex flex-col gap-3">
+            {devotionals.length === 0 ? (
+              <div className="text-center py-12 text-ink-muted">
+                <BookOpen size={40} className="mx-auto mb-3 opacity-30" />
+                <p className="font-semibold">Nenhum devocional publicado ainda.</p>
+                <p className="text-sm mt-1">Volte em breve!</p>
+              </div>
+            ) : (
+              devotionals.map((d, i) => (
+                <DevotionalListItem
+                  key={d.id}
+                  devotional={d}
+                  completed={completedIds.includes(d.id)}
+                  index={i}
+                />
+              ))
+            )}
+          </div>
+        </PullToRefresh>
       </main>
     </div>
   )
