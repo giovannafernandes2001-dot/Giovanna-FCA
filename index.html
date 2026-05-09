@@ -385,6 +385,61 @@
     opacity: 0.5;
     margin-top: 2px;
   }
+
+  /* ── Extras ── */
+  .extras-form {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0 6px;
+  }
+
+  .extras-input {
+    flex: 1;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .extras-input:focus { border-color: var(--accent); }
+  .extras-input::placeholder { color: var(--border); }
+
+  .btn-add {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-add:hover { opacity: 0.85; }
+
+  .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.15s;
+    line-height: 1;
+    opacity: 0.5;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .delete-btn:hover { background: #fde8e8; opacity: 1; }
 </style>
 </head>
 <body>
@@ -418,6 +473,20 @@
 </header>
 
 <div id="list-container"></div>
+
+<!-- Extras Section -->
+<div class="section" id="extras-section" style="margin-bottom: 20px;">
+  <div class="section-header">
+    <span style="font-size:18px">➕</span>
+    <span class="section-title">Itens Extras</span>
+    <span class="section-count" id="extras-count"></span>
+  </div>
+  <div id="extras-list"></div>
+  <div class="extras-form">
+    <input type="text" id="extras-input" class="extras-input" placeholder="Ex: Arroz, Sabão em pó…" autocomplete="off" />
+    <button id="extras-add-btn" class="btn-add">+ Adicionar</button>
+  </div>
+</div>
 
 <div class="grand-total-bar">
   <div>
@@ -774,12 +843,13 @@ const sections = [
 ];
 
 // ── State ──────────────────────────────────────────
-let prices = {};
+let prices  = {};
 let checked = {};
+let extras  = []; // [{ id, name }]
 
 function saveState() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ prices, checked }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ prices, checked, extras }));
   } catch (_) {}
 }
 
@@ -790,6 +860,7 @@ function loadState() {
     const s = JSON.parse(raw);
     prices  = s.prices  || {};
     checked = s.checked || {};
+    extras  = s.extras  || [];
   } catch (_) {}
 }
 
@@ -953,14 +1024,121 @@ function buildList() {
   updateTotals();
 }
 
+// ── Extras ─────────────────────────────────────────
+function renderExtras() {
+  const list = document.getElementById('extras-list');
+  list.innerHTML = '';
+
+  extras.forEach(extra => {
+    const key = extra.id;
+    if (prices[key] === undefined) prices[key] = 0;
+
+    const itemDiv     = document.createElement('div');
+    itemDiv.className = 'item' + (checked[key] ? ' checked' : '');
+    itemDiv.dataset.key   = key;
+    itemDiv.dataset.units = '1';
+
+    const main     = document.createElement('div');
+    main.className = 'item-main';
+
+    const checkbox     = document.createElement('div');
+    checkbox.className = 'checkbox';
+    if (checked[key]) checkbox.textContent = '✓';
+
+    const info     = document.createElement('div');
+    info.className = 'item-info';
+    info.innerHTML = `<div class="item-name">${extra.name}</div>`;
+
+    const actions     = document.createElement('div');
+    actions.className = 'item-actions';
+
+    const priceWrap     = document.createElement('div');
+    priceWrap.className = 'price-input-wrap';
+    priceWrap.innerHTML = `<span class="price-symbol">R$</span>`;
+
+    const input     = document.createElement('input');
+    input.className = 'price-input';
+    input.type        = 'number';
+    input.min         = '0';
+    input.step        = '0.01';
+    input.placeholder = '0,00';
+    input.inputMode   = 'decimal';
+    if (prices[key]) input.value = prices[key];
+
+    input.addEventListener('input', e => {
+      e.stopPropagation();
+      prices[key] = parseFloat(e.target.value) || 0;
+      updateTotals();
+    });
+
+    priceWrap.appendChild(input);
+    actions.appendChild(priceWrap);
+
+    const delBtn     = document.createElement('button');
+    delBtn.className = 'delete-btn';
+    delBtn.textContent = '🗑️';
+    delBtn.title       = 'Remover item';
+    delBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      extras = extras.filter(ex => ex.id !== key);
+      delete prices[key];
+      delete checked[key];
+      saveState();
+      renderExtras();
+      updateTotals();
+    });
+    actions.appendChild(delBtn);
+
+    main.appendChild(checkbox);
+    main.appendChild(info);
+    main.appendChild(actions);
+
+    main.addEventListener('click', e => {
+      if (e.target === input || e.target === delBtn) return;
+      itemDiv.classList.toggle('checked');
+      const isChecked      = itemDiv.classList.contains('checked');
+      checkbox.textContent = isChecked ? '✓' : '';
+      checked[key]         = isChecked;
+      updateTotals();
+    });
+
+    itemDiv.appendChild(main);
+    list.appendChild(itemDiv);
+  });
+
+  const count = extras.length;
+  document.getElementById('extras-count').textContent =
+    count > 0 ? count + ' item' + (count > 1 ? 's' : '') : '';
+
+  updateTotals();
+}
+
+function addExtra() {
+  const input = document.getElementById('extras-input');
+  const name  = input.value.trim();
+  if (!name) return;
+  const id = 'extra_' + Date.now();
+  extras.push({ id, name });
+  input.value = '';
+  saveState();
+  renderExtras();
+}
+
+document.getElementById('extras-add-btn').addEventListener('click', addExtra);
+document.getElementById('extras-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addExtra();
+});
+
 // ── Reset ──────────────────────────────────────────
 document.getElementById('btn-reset').addEventListener('click', () => {
-  if (!confirm('Resetar toda a lista? Preços e marcações serão apagados.')) return;
+  if (!confirm('Resetar toda a lista? Preços, marcações e itens extras serão apagados.')) return;
   prices  = {};
   checked = {};
+  extras  = [];
   saveState();
   document.getElementById('list-container').innerHTML = '';
   buildList();
+  renderExtras();
 });
 
 // ── PWA Install ────────────────────────────────────
@@ -1002,6 +1180,7 @@ if ('serviceWorker' in navigator) {
 // ── Init ───────────────────────────────────────────
 loadState();
 buildList();
+renderExtras();
 </script>
 </body>
 </html>
