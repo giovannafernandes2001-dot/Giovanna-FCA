@@ -45,6 +45,15 @@ export default function ClosingBlock({ type, content }: ClosingBlockProps) {
             <p className="prose-bible text-white/90 leading-relaxed whitespace-pre-line">
               {content}
             </p>
+          ) : isSpotifyUrl(content) ? (
+            <iframe
+              src={toSpotifyEmbed(content)}
+              title="Música para reflexão"
+              className="w-full rounded-xl"
+              height="152"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+            />
           ) : (
             <div className="aspect-video rounded-xl overflow-hidden">
               <iframe
@@ -65,4 +74,14 @@ export default function ClosingBlock({ type, content }: ClosingBlockProps) {
 function extractYouTubeId(url: string) {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([^&?/]+)/)
   return match ? match[1] : url
+}
+
+function isSpotifyUrl(url: string) {
+  return url.includes('open.spotify.com')
+}
+
+function toSpotifyEmbed(url: string) {
+  return url
+    .replace('open.spotify.com/', 'open.spotify.com/embed/')
+    .split('?')[0]
 }

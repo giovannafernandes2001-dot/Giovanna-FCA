@@ -167,10 +167,10 @@ export default function DevotionalForm({ initialData }: DevotionalFormProps) {
 
       <Textarea
         id="closing_content"
-        label={form.closing_type === 'prayer' ? 'Texto da oração' : 'Link do YouTube (música)'}
+        label={form.closing_type === 'prayer' ? 'Texto da oração' : 'Link da música (YouTube ou Spotify)'}
         placeholder={form.closing_type === 'prayer'
           ? 'Senhor Jesus, Tu és a videira…'
-          : 'https://www.youtube.com/watch?v=...'}
+          : 'https://www.youtube.com/watch?v=... ou https://open.spotify.com/track/...'}
         value={form.closing_content}
         onChange={e => update('closing_content', e.target.value)}
         required
