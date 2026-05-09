@@ -1,4 +1,4 @@
-import { Play, Radio } from 'lucide-react'
+import { Play, Radio, ExternalLink } from 'lucide-react'
 import type { YouTubeLive } from '@/types'
 import YouTubeEmbed from './YouTubeEmbed'
 
@@ -17,7 +17,7 @@ function formatDate(dateStr: string) {
 }
 
 function getYouTubeId(url: string): string | null {
-  const match = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+  const match = url.match(/(?:v=|youtu\.be\/|live\/)([A-Za-z0-9_-]{11})/)
   return match ? match[1] : null
 }
 
@@ -37,7 +37,7 @@ export default function LiveCard({ live }: LiveCardProps) {
             <Play size={16} className="text-white fill-white" />
           )}
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           {live.is_live && (
             <span className="inline-block text-xs font-bold uppercase tracking-wider text-red-500 mb-1">
               Ao Vivo
@@ -45,6 +45,15 @@ export default function LiveCard({ live }: LiveCardProps) {
           )}
           <h3 className="font-serif font-bold text-ink text-lg leading-snug">{live.title}</h3>
           <p className="text-sm text-ink-muted mt-1 capitalize">{formatDate(live.live_date)}</p>
+          <a
+            href={live.youtube_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 mt-2 text-sm font-semibold text-brand-blue"
+          >
+            <ExternalLink size={14} />
+            Abrir no YouTube
+          </a>
         </div>
       </div>
     </div>
