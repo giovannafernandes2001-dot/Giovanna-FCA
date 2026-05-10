@@ -15,10 +15,9 @@ export default function Header({ title, showBack, backLabel }: HeaderProps) {
   const supabase = createClient()
 
   async function handleLogout() {
-    const { data: { user } } = await supabase.auth.getUser()
-    const isAdmin = user?.user_metadata?.role === 'admin'
+    const isAdminPage = window.location.pathname.startsWith('/admin')
     await supabase.auth.signOut()
-    router.push(isAdmin ? '/admin-login' : '/login')
+    router.push(isAdminPage ? '/admin-login' : '/login')
     router.refresh()
   }
 
