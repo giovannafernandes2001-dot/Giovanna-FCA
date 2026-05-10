@@ -34,12 +34,12 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const publicPaths = ['/login', '/cadastro', '/admin/login']
+  const publicPaths = ['/login', '/cadastro', '/admin-login']
   const isPublic = publicPaths.some(p => pathname.startsWith(p))
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()
-    url.pathname = pathname.startsWith('/admin') ? '/admin/login' : '/login'
+    url.pathname = pathname.startsWith('/admin') ? '/admin-login' : '/login'
     return NextResponse.redirect(url)
   }
 
@@ -49,7 +49,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && pathname === '/admin/login' && user.user_metadata?.role === 'admin') {
+  if (user && pathname === '/admin-login' && user.user_metadata?.role === 'admin') {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'
     return NextResponse.redirect(url)
