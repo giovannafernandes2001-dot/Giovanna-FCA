@@ -1,18 +1,15 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Globe, Eye, EyeOff } from 'lucide-react'
+import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const router = useRouter()
-  const [username, setUsername] = useState('')
+  const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -24,9 +21,8 @@ export default function LoginPage() {
     setLoading(true)
 
     const supabase = createClient()
-    const input = username.trim()
+    const input = login.trim()
 
-    // Try to resolve username → email via RPC; fall back to treating input as email
     const { data: emailData } = await supabase
       .rpc('get_email_by_username', { p_username: input })
 
@@ -35,48 +31,54 @@ export default function LoginPage() {
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (signInError) {
-      setError('Login ou senha incorretos. Tente novamente.')
+      setError('Login ou senha incorretos.')
       setLoading(false)
       return
     }
 
-    router.push('/')
+    router.push('/admin')
     router.refresh()
   }
 
   return (
-    <div className="min-h-screen bg-brand-blue flex flex-col items-center justify-center px-5 py-10">
+    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-5 py-10">
       <div className="w-full max-w-sm flex flex-col items-center gap-8 animate-fade-in">
 
         <div className="flex flex-col items-center gap-3 text-white text-center">
-          <div className="w-20 h-20 rounded-full bg-white/10 border-2 border-brand-gold flex items-center justify-center">
-            <Globe size={44} className="text-brand-gold" />
+          <div className="w-20 h-20 rounded-full bg-white/5 border-2 border-brand-gold flex items-center justify-center">
+            <ShieldCheck size={44} className="text-brand-gold" />
           </div>
           <div>
-            <h1 className="font-serif text-3xl font-bold">Grão de Mostarda</h1>
-            <p className="text-sm text-white/70 mt-1">Ministérios Cristãos</p>
+            <h1 className="font-serif text-3xl font-bold">Área Admin</h1>
+            <p className="text-sm text-white/50 mt-1">Grão de Mostarda</p>
           </div>
         </div>
 
-        <div className="w-full bg-surface rounded-2xl shadow-xl p-6 flex flex-col gap-5">
+        <div className="w-full bg-gray-900 border border-white/10 rounded-2xl shadow-xl p-6 flex flex-col gap-5">
           <div>
-            <h2 className="font-serif text-2xl font-bold text-ink">Entrar</h2>
-            <p className="text-sm text-ink-muted mt-1">Acesse os devocionais da semana</p>
+            <h2 className="font-serif text-2xl font-bold text-white">Entrar</h2>
+            <p className="text-sm text-white/50 mt-1">Acesso restrito à liderança</p>
           </div>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            <Input
-              id="username"
-              label="Nome de login ou e-mail"
-              placeholder="nome de login ou seu@email.com"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              required
-              autoComplete="username"
-            />
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="login" className="text-sm font-semibold text-white/80">
+                Nome de login ou e-mail
+              </label>
+              <input
+                id="login"
+                type="text"
+                placeholder="nome de login ou seu@email.com"
+                value={login}
+                onChange={e => setLogin(e.target.value)}
+                required
+                autoComplete="username"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-brand-gold focus:outline-none transition-colors"
+              />
+            </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="password" className="text-sm font-semibold text-ink">
+              <label htmlFor="password" className="text-sm font-semibold text-white/80">
                 Senha
               </label>
               <div className="relative">
@@ -88,12 +90,12 @@ export default function LoginPage() {
                   onChange={e => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="w-full rounded-xl border-2 border-cream-dark bg-surface px-4 py-3 pr-12 text-base text-ink placeholder:text-ink-muted focus:border-brand-blue focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-base text-white placeholder:text-white/30 focus:border-brand-gold focus:outline-none transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink transition-colors p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 p-1"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -102,7 +104,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3 border border-red-200">
+              <p className="text-sm text-red-400 bg-red-950/50 rounded-xl px-4 py-3 border border-red-800/50">
                 {error}
               </p>
             )}
@@ -112,13 +114,6 @@ export default function LoginPage() {
             </Button>
           </form>
         </div>
-
-        <p className="text-white/70 text-sm text-center">
-          Não tem conta ainda?{' '}
-          <Link href="/cadastro" className="text-brand-gold font-semibold underline">
-            Criar conta
-          </Link>
-        </p>
       </div>
     </div>
   )
