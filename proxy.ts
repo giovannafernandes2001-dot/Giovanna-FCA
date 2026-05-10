@@ -43,9 +43,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && (pathname === '/login' || pathname === '/admin/login')) {
+  if (user && pathname === '/login') {
     const url = request.nextUrl.clone()
-    url.pathname = pathname.startsWith('/admin') ? '/admin' : '/'
+    url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+
+  if (user && pathname === '/admin/login' && user.user_metadata?.role === 'admin') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin'
     return NextResponse.redirect(url)
   }
 
